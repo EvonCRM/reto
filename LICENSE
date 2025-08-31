@@ -1,0 +1,45 @@
+Licencia de Uso Limitado para Reto Técnico (Versión 1.0)
+
+1. Definiciones
+- Titular: el propietario de este repositorio y del código incluido en él.
+- Licenciatario: la persona invitada por el Titular a participar en un proceso de evaluación o “Reto Técnico”.
+- Reto Técnico: ejercicio de evaluación técnica realizado exclusivamente para valorar las capacidades del Licenciatario.
+
+2. Concesión de licencia
+El Titular concede al Licenciatario una licencia no exclusiva, intransferible, no sublicenciable, revocable y sin coste para:
+- Clonar, ver, compilar y ejecutar el código localmente.
+- Modificar el código únicamente en la medida necesaria para completar el Reto Técnico.
+- Entregar al Titular los resultados del Reto Técnico (incluyendo cambios puntuales al código).
+
+3. Restricciones
+Salvo permiso previo y por escrito del Titular, queda estrictamente prohibido:
+- Usar el código, total o parcialmente, fuera del Reto Técnico.
+- Uso comercial, en producción, interno, educativo, de demostración pública, portafolio o cualquier otro fin no vinculado al Reto Técnico.
+- Publicar o redistribuir el código o derivados (p. ej., repositorios públicos/privados, gists, paquetes, fragmentos en foros).
+- Integrar componentes o fragmentos del código en otros proyectos o plantillas.
+- Sublicenciar, ceder, transferir, alquilar o vender el código o sus derivados.
+- Remover avisos de titularidad o licencia, o eludir medidas de seguridad.
+
+4. Confidencialidad
+El código y materiales del Reto Técnico se consideran confidenciales. El Licenciatario no podrá divulgarlos a terceros sin autorización escrita del Titular.
+
+5. Propiedad intelectual
+El Titular conserva todos los derechos, títulos e intereses sobre el código y materiales. Esta licencia no transfiere propiedad.
+Las contribuciones o modificaciones realizadas por el Licenciatario en el contexto del Reto Técnico pueden ser usadas por el Titular con fines de revisión, auditoría, mejora del reto y documentación del proceso, sin que ello otorgue derechos adicionales al Licenciatario.
+
+6. Vigencia y terminación
+Esta licencia entra en vigor al concederse acceso al código y:
+- Finaliza automáticamente al concluir el Reto Técnico o por notificación del Titular.
+- El Titular puede revocarla en cualquier momento, con o sin causa.
+Tras la terminación, el Licenciatario deberá cesar todo uso y eliminar copias locales a petición del Titular.
+El incumplimiento de esta licencia provoca su terminación inmediata.
+
+7. Ausencia de garantía y limitación de responsabilidad
+El código se proporciona “tal cual”, sin garantías de ningún tipo, expresas o implícitas.
+En ningún caso el Titular será responsable por daños directos, indirectos, incidentales, especiales, ejemplares o consecuentes derivados del uso o imposibilidad de uso del código.
+
+8. Ley aplicable y jurisdicción
+Esta licencia se rige por las leyes de la jurisdicción del Titular, salvo que las partes acuerden otra por escrito. Cualquier disputa se someterá a los tribunales competentes de dicha jurisdicción.
+
+9. Aceptación
+El acceso, clonación, compilación, ejecución o modificación del código implica la aceptación íntegra de esta licencia por parte del Licenciatario.

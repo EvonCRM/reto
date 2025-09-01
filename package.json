@@ -84,6 +84,7 @@
     "markdown-it": "14.1.0",
     "mdast-util-toc": "7.1.0",
     "memory-cache": "0.2.0",
+    "motion-dom": "^12.23.12",
     "next": "15.2.1",
     "next-auth": "5.0.0-beta.25",
     "next-safe-action": "7.10.4",

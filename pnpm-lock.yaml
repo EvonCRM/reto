@@ -204,6 +204,9 @@ importers:
       memory-cache:
         specifier: 0.2.0
         version: 0.2.0
+      motion-dom:
+        specifier: ^12.23.12
+        version: 12.23.12
       next:
         specifier: 15.2.1
         version: 15.2.1(@babel/core@7.24.5)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -5477,8 +5480,11 @@ packages:
   mitt@3.0.1:
     resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
 
-  motion-dom@12.4.10:
-    resolution: {integrity: sha512-ISP5u6FTceoD6qKdLupIPU/LyXBrxGox+P2e3mBbm1+pLdlBbwv01YENJr7+1WZnW5ucVKzFScYsV1eXTCG4Xg==}
+  motion-dom@12.23.12:
+    resolution: {integrity: sha512-RcR4fvMCTESQBD/uKQe49D5RUeDOokkGRmz4ceaJKDBgHYtZtntC/s2vLvY38gqGaytinij/yi3hMcWVcEF5Kw==}
+
+  motion-utils@12.23.6:
+    resolution: {integrity: sha512-eAWoPgr4eFEOFfg2WjIsMoqJTW6Z8MTUCgn/GZ3VRpClWBdnbjryiA3ZSNLyxCTmCQx4RmYX6jX1iWHbenUPNQ==}
 
   motion-utils@12.4.10:
     resolution: {integrity: sha512-NPwZd94V013SwRf++jMrk2+HEBgPkeIE2RiOzhAuuQlqxMJPkKt/LXVh6Upl+iN8oarSGD2dlY5/bqgsYXDABA==}
@@ -11904,7 +11910,7 @@ snapshots:
 
   framer-motion@12.4.10(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
-      motion-dom: 12.4.10
+      motion-dom: 12.23.12
       motion-utils: 12.4.10
       tslib: 2.8.1
     optionalDependencies:
@@ -13076,9 +13082,11 @@ snapshots:
 
   mitt@3.0.1: {}
 
-  motion-dom@12.4.10:
+  motion-dom@12.23.12:
     dependencies:
-      motion-utils: 12.4.10
+      motion-utils: 12.23.6
+
+  motion-utils@12.23.6: {}
 
   motion-utils@12.4.10: {}
 

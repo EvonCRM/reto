@@ -70,7 +70,9 @@ function HeroDescription(): React.JSX.Element {
       transition={{ delay: 0.4, duration: 0.4 }}
       className="mx-auto mt-3 max-w-[560px] text-balance text-center text-lg leading-[26px] text-muted-foreground sm:text-xl lg:mt-6"
     >
-      Create an application that allows users to build dynamic forms and interact with them intuitively. This is your technical challenge to showcase your development skills.
+      Create an application that allows users to build dynamic forms and
+      interact with them intuitively. This is your technical challenge to
+      showcase your development skills.
     </motion.p>
   );
 }
@@ -84,7 +86,7 @@ function HeroButtons(): React.JSX.Element {
       className="mx-auto flex w-full flex-col gap-2 px-7 sm:w-auto sm:flex-row sm:px-0"
     >
       <Link
-        href={Routes.SignUp}
+        href={Routes.FormBuilder}
         className={cn(
           buttonVariants({
             variant: 'default'
@@ -180,7 +182,9 @@ function HeroIllustration(): React.JSX.Element {
       className="relative mt-8 lg:mt-12"
     >
       <div className="mx-auto max-w-4xl rounded-xl border bg-card p-8 shadow-lg">
-        <h2 className="mb-6 text-center text-2xl font-semibold">Challenge Requirements</h2>
+        <h2 className="mb-6 text-center text-2xl font-semibold">
+          Challenge Requirements
+        </h2>
         <div className="grid gap-6 md:grid-cols-2">
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Core Features</h3>

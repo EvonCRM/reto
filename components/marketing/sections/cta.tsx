@@ -20,7 +20,7 @@ export function CTA(): React.JSX.Element {
               type="button"
               variant="default"
               className="h-10 gap-2 whitespace-nowrap rounded-full"
-              onClick={() => (window.location.href = '/auth/signup')}
+              onClick={() => (window.location.href = '/form-builder')}
             >
               Start Challenge
             </Button>

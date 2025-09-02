@@ -10,6 +10,7 @@ export enum Routes {
   TermsOfUse = '/terms-of-use',
   PrivacyPolicy = '/privacy-policy',
   CookiePolicy = '/cookie-policy',
+  FormBuilder = '/form-builder',
 
   Auth = '/auth',
   Login = '/auth/login',

@@ -34,7 +34,7 @@ export function Navbar(): React.JSX.Element {
               Log in
             </Link>
             <Link
-              href={Routes.SignUp}
+              href={Routes.FormBuilder}
               className={cn(
                 buttonVariants({
                   variant: 'default'

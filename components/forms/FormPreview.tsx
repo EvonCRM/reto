@@ -2,11 +2,11 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { VALIDATION_PATTERNS } from '@/schemas/forms/patterns';
-import type { FieldConfig, FormConfig } from '@/types/form';
+import type { FieldConfig, FieldSelectConfig, FormConfig } from '@/types/form';
 
 interface FormPreviewProps {
   form: FormConfig;
@@ -18,6 +18,46 @@ interface FormPreviewProps {
 function generateSchema(fields: FieldConfig[]) {
   const schemaShape: Record<string, z.ZodTypeAny> = {};
   fields.forEach((field) => {
+    // --- SELECT (simple / múltiple) ---
+    if (field.type === 'select') {
+      const f = field as FieldSelectConfig;
+
+      // opciones seguras (evita undefined)
+      const options = Array.isArray(f.options) ? f.options : [];
+      const optionValues = options.map((o) => o.value);
+      const multiple = !!f.multiple;
+
+      if (multiple) {
+        let v = z.array(z.string());
+        if (field.required) v = v.min(1, 'Selecciona al menos una opción');
+        if (typeof f.minSelected === 'number')
+          v = v.min(f.minSelected, `Elige al menos ${f.minSelected}`);
+        if (typeof f.maxSelected === 'number')
+          v = v.max(f.maxSelected, `Elige como máximo ${f.maxSelected}`);
+        if (!f.allowCustom) {
+          v = v.refine(
+            (arr) => arr.every((val) => optionValues.includes(val)),
+            {
+              message: 'Una o más opciones no son válidas'
+            }
+          );
+        }
+        schemaShape[field.name] = v;
+      } else {
+        let v = z.string();
+        if (field.required) v = v.min(1, 'Campo requerido');
+        if (!f.allowCustom) {
+          v = v.refine((val) => optionValues.includes(val), {
+            message: 'Opción inválida'
+          });
+        }
+        schemaShape[field.name] = v;
+      }
+
+      return; // <- MUY IMPORTANTE: no sigas con la lógica de strings
+    }
+
+    // --- AQUÍ SIGUE TU LÓGICA EXISTENTE PARA text/date/textarea ---
     let validator: z.ZodString = z.string();
     if (field.required) {
       validator = validator.min(1, 'Campo requerido');
@@ -48,14 +88,12 @@ function generateSchema(fields: FieldConfig[]) {
         try {
           const customPattern = new RegExp(v.customRegex);
           validator = validator.regex(customPattern, 'Formato inválido');
-        } catch (_err) {
-          // Si la regex es inválida, no aplicar
-          console.error(_err);
-        }
+        } catch {}
       }
     }
     schemaShape[field.name] = validator;
   });
+
   return z.object(schemaShape);
 }
 
@@ -72,6 +110,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ form }) => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
     reset
   } = useForm({ resolver: zodResolver(schema) });
@@ -144,6 +183,77 @@ const FormPreview: React.FC<FormPreviewProps> = ({ form }) => {
                 {...register(field.name)}
               />
             )}
+            {field.type === 'select' && field.multiple && (
+              <Controller
+                control={control}
+                name={field.name}
+                defaultValue={[]}
+                render={({ field: rhf }) => {
+                  const value: string[] = Array.isArray(rhf.value)
+                    ? rhf.value
+                    : [];
+                  return (
+                    <div
+                      role="group"
+                      aria-labelledby={`${field.name}-legend`}
+                      className="mt-2 space-y-2"
+                    >
+                      {(field.options ?? []).map((opt) => {
+                        const checked = value.includes(opt.value);
+                        return (
+                          <label
+                            key={opt.value}
+                            className="flex cursor-pointer items-center gap-2"
+                          >
+                            <input
+                              type="checkbox"
+                              className="size-4 accent-indigo-600"
+                              checked={checked}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  rhf.onChange([...value, opt.value]);
+                                } else {
+                                  rhf.onChange(
+                                    value.filter((v) => v !== opt.value)
+                                  );
+                                }
+                              }}
+                              onBlur={rhf.onBlur}
+                            />
+                            <span className="text-sm text-gray-800">
+                              {opt.label}
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  );
+                }}
+              />
+            )}
+            {field.type === 'select' && !field.multiple && (
+              <div
+                role="radiogroup"
+                aria-labelledby={`${field.name}-legend`}
+                className="mt-2 space-y-2"
+              >
+                {(field.options ?? []).map((opt) => (
+                  <label
+                    key={opt.value}
+                    className="flex cursor-pointer items-center gap-2"
+                  >
+                    <input
+                      type="radio"
+                      value={opt.value}
+                      {...register(field.name)}
+                      className="size-4 accent-indigo-600"
+                    />
+                    <span className="text-sm text-gray-800">{opt.label}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+
             {errors[field.name] && (
               <p className="mt-1 text-sm text-red-600">
                 {(errors as any)[field.name]?.message?.toString()}

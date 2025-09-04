@@ -65,3 +65,22 @@ export interface FormConfig {
   type: 'simple' | 'multi-step';
   steps: FormStep[];
 }
+
+export type ThemeId = 'light' | 'ocean' | 'sunset' | 'terminal';
+
+export interface FormMeta {
+  id: string;
+  title: string;
+  description?: string;
+  type: 'simple' | 'multi-step';
+  theme: ThemeId;
+  coverUrl?: string; // imagen de fondo/portada
+  updatedAt: string; // ISO
+  fieldsCount: number; // denormalizado para pintar rápido
+  stepsCount: number; // denormalizado
+}
+
+export interface StoredForm {
+  meta: FormMeta;
+  config: FormConfig; // el FormConfig completo que ya manejas
+}

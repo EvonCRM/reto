@@ -126,7 +126,7 @@ const FormEditor: React.FC<FormEditorProps> = ({
   };
 
   return (
-    <div className="h-full overflow-y-auto p-4">
+    <div className=" overflow-y-visible p-4">
       <h2 className="text-xl font-semibold text-gray-800">
         Editor de formulario
       </h2>
@@ -156,7 +156,8 @@ const FormEditor: React.FC<FormEditorProps> = ({
             placeholder="Descripción (opcional)"
           />
         </div>
-        <div>
+        {/*Commented fields in case we need them */}
+        {/* <div>
           <label className="block text-sm font-medium text-gray-700">
             Información superior
           </label>
@@ -179,7 +180,7 @@ const FormEditor: React.FC<FormEditorProps> = ({
             onChange={(e) => updateForm({ infoBottom: e.target.value })}
             placeholder="Texto informativo debajo del formulario (opcional)"
           />
-        </div>
+        </div> */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Tipo de formulario

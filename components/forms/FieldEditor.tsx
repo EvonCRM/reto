@@ -147,7 +147,7 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
   };
 
   return (
-    <div className="mt-4 rounded border bg-white p-4 shadow-md">
+    <div className="mt-4 rounded border p-4 shadow-md">
       <h3 className="mb-2 font-semibold text-gray-800">
         {mode === 'create' ? 'Agregar campo' : 'Editar campo'}
       </h3>

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
 import HomeTabs from '@/components/layout/HomeTabs';
-import { listForms } from '@/lib/forms/forms-store';
+import { deleteForm, listForms } from '@/lib/forms/forms-store';
 import type { FormMeta } from '@/types/form';
 
 export default function FormsTabPage() {
@@ -95,19 +95,40 @@ export default function FormsTabPage() {
                   </p>
                 )}
               </div>
-              <div className="flex items-center gap-2 p-4 pt-0">
+              {/* Acciones (misma altura que "Editar") */}
+              <div className="my-2 flex items-center justify-evenly gap-2 p-2">
                 <Link
                   href={`/dashboard/form-builder?id=${m.id}&from=forms`}
-                  className="rounded border px-2 py-1 text-xs hover:bg-gray-50"
+                  className="rounded border px-2 py-1 text-xs hover:bg-gray-50
+               dark:border-zinc-700 dark:hover:bg-zinc-800"
                 >
                   ✏️ Editar
                 </Link>
-                {/* <Link
-                  href={`/dashboard/home/forms/${m.id}`}
-                  className="rounded border px-2 py-1 text-xs hover:bg-gray-50"
+
+                <Link
+                  href={`/dashboard/forms/${m.id}`}
+                  className="rounded border px-2 py-1 text-xs hover:bg-gray-50
+               dark:border-zinc-700 dark:hover:bg-zinc-800"
                 >
                   👀 Preview
-                </Link> */}
+                </Link>
+
+                {/* Eliminar alineado a la derecha */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    if (!window.confirm('¿Eliminar este formulario?')) return;
+                    deleteForm(m.id); // tu función del store
+                    setItems((prev) => prev.filter((x) => x.id !== m.id)); // refrescar UI
+                  }}
+                  title="Eliminar formulario"
+                  aria-label="Eliminar formulario"
+                  className=" ml-auto inline-flex items-center gap-1 rounded-md border border-red-500/30 px-2 py-1 text-xs text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500/50 dark:border-red-400/30 dark:text-red-400 dark:hover:bg-red-500/10"
+                >
+                  🗑 Eliminar
+                </button>
               </div>
             </article>
           ))}

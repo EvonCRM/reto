@@ -64,6 +64,11 @@ export interface FormConfig {
   infoBottom?: string;
   type: 'simple' | 'multi-step';
   steps: FormStep[];
+
+  // NUEVO: imagen de fondo del formulario (opcional)
+  backgroundUrl?: string; // URL absoluta o relativa
+  backgroundMode?: 'cover' | 'contain'; // opcional, por defecto 'cover'
+  backgroundTint?: 'none' | 'dark' | 'light'; // opcional, para legibilidad
 }
 
 export type ThemeId = 'light' | 'ocean' | 'sunset' | 'terminal';

@@ -13,6 +13,32 @@ const FormBuilder: React.FC = () => {
   const router = useRouter();
   const search = useSearchParams();
   const editingId = search.get('id') || undefined;
+
+  const sp = useSearchParams();
+  const id = sp.get('id') ?? 'new';
+  const from = sp.get('from') as 'forms' | 'templates' | null;
+
+  // 👇 remonta FormBuilder cada vez que cambia el id
+  return (
+    <FormBuilderScreen
+      key={id}
+      editingId={id !== 'new' ? id : undefined}
+      from={from ?? undefined}
+    />
+  );
+};
+
+// components/forms/FormBuilder.tsx
+
+type Props = {
+  editingId?: string; // ← llega desde la page
+  from?: 'forms' | 'templates';
+};
+
+const FormBuilderScreen: React.FC<Props> = ({ editingId, from }) => {
+  const router = useRouter();
+
+  // ← pasa el id al hook; el hook debe rehidratar cuando cambie
   const {
     form,
     currentStep,
@@ -23,66 +49,82 @@ const FormBuilder: React.FC = () => {
     addField,
     updateField,
     removeField
-  } = useFormBuilder();
+  } = useFormBuilder(editingId);
 
   const onSave = () => {
     const id = upsertForm(form, {
-      id: editingId, // si vienes de editar, respeta el id; si no, crea uno nuevo
-      theme: 'ocean', // TODO: elegir desde UI
-      coverUrl: undefined
+      id: editingId, // respeta id si editas; crea nuevo si undefined
+      theme: 'ocean',
+      coverUrl: form.backgroundUrl ?? undefined
     });
-    // navega al builder con ese id o al panel
-    router.push(`/dashboard/form-builder?id=${id}`);
+    router.replace(
+      `/dashboard/form-builder?id=${id}${from ? `&from=${from}` : ''}`
+    );
   };
+
   const onSaveAndExit = () => {
-    const id = upsertForm(form, { id: editingId, theme: 'ocean' });
-    router.push('/dashboard/home/forms'); // volver al panel
+    router.push('/dashboard/home/forms');
   };
 
   return (
-    <div className="flex h-screen flex-col divide-y md:flex-row md:divide-x md:divide-y-0">
+    <div className="flex h-full min-h-0 flex-col md:flex-row md:divide-x">
       {/* Panel de edición */}
-      <div className="h-1/2 overflow-auto md:h-full md:w-1/2">
-        <div className="flex items-center gap-3 border-b px-4 py-3">
-          <a
-            href="/dashboard/home/forms"
-            className="text-sm text-gray-600 hover:underline"
-          >
-            ← Mis formularios
-          </a>
-          <div className="ml-auto flex items-center gap-2">
-            <button
-              onClick={onSave}
-              className="rounded bg-emerald-600 px-3 py-2 text-sm text-white hover:bg-emerald-700"
-              title="Guardar cambios"
+      <section className="flex min-h-0 flex-1 flex-col">
+        <div className="shrink-0 border-b px-4 py-3">
+          <div className="flex items-center gap-3">
+            <a
+              href={
+                from === 'templates'
+                  ? '/dashboard/home/templates'
+                  : '/dashboard/home/forms'
+              }
+              className="text-sm text-gray-600 hover:underline"
             >
-              💾 Guardar
-            </button>
-            <button
-              onClick={onSaveAndExit}
-              className="rounded border px-3 py-2 text-sm hover:bg-gray-50"
-              title="Guardar y volver al panel"
-            >
-              Guardar y salir
-            </button>
+              ← Mis formularios
+            </a>
+            <div className="ml-auto flex items-center gap-2">
+              <button
+                onClick={onSave}
+                className="rounded bg-emerald-600 px-3 py-2 text-sm text-white hover:bg-emerald-700"
+              >
+                💾 Guardar
+              </button>
+              <button
+                onClick={onSaveAndExit}
+                className="rounded border px-3 py-2 text-sm hover:bg-gray-50"
+              >
+                Guardar y salir
+              </button>
+            </div>
           </div>
         </div>
-        <FormEditor
-          form={form}
-          currentStep={currentStep}
-          updateForm={updateForm}
-          changeStep={changeStep}
-          addStep={addStep}
-          removeStep={removeStep}
-          addField={addField}
-          updateField={updateField}
-          removeField={removeField}
-        />
-      </div>
+
+        <div className="min-h-0 flex-1 overflow-auto p-4">
+          <FormEditor
+            form={form}
+            currentStep={currentStep}
+            updateForm={updateForm}
+            changeStep={changeStep}
+            addStep={addStep}
+            removeStep={removeStep}
+            addField={addField}
+            updateField={updateField}
+            removeField={removeField}
+            setPreviewStep={changeStep} // ← viene del hook del editor
+            previewMode={true}
+          />
+        </div>
+      </section>
+
       {/* Panel de previsualización */}
-      <div className="h-1/2 overflow-auto md:h-full md:w-1/2">
-        <FormPreview form={form} />
-      </div>
+      <section className="min-h-0 flex-1 overflow-auto p-4">
+        <FormPreview
+          form={form}
+          previewStep={currentStep}
+          setPreviewStep={changeStep} // ← viene del hook del editor
+          previewMode={true}
+        />
+      </section>
     </div>
   );
 };

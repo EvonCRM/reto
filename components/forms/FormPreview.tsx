@@ -8,10 +8,6 @@ import { z } from 'zod';
 import { VALIDATION_PATTERNS } from '@/schemas/forms/patterns';
 import type { FieldConfig, FieldSelectConfig, FormConfig } from '@/types/form';
 
-interface FormPreviewProps {
-  form: FormConfig;
-}
-
 /**
  * Genera un esquema de validación de Zod a partir de una lista de campos.
  */
@@ -28,7 +24,7 @@ function generateSchema(fields: FieldConfig[]) {
       const multiple = !!f.multiple;
 
       if (multiple) {
-        let v = z.array(z.string());
+        let v: any = z.array(z.string());
         if (field.required) v = v.min(1, 'Selecciona al menos una opción');
         if (typeof f.minSelected === 'number')
           v = v.min(f.minSelected, `Elige al menos ${f.minSelected}`);
@@ -36,7 +32,7 @@ function generateSchema(fields: FieldConfig[]) {
           v = v.max(f.maxSelected, `Elige como máximo ${f.maxSelected}`);
         if (!f.allowCustom) {
           v = v.refine(
-            (arr) => arr.every((val) => optionValues.includes(val)),
+            (arr: string) => arr.every((val) => optionValues.includes(val)),
             {
               message: 'Una o más opciones no son válidas'
             }
@@ -97,9 +93,22 @@ function generateSchema(fields: FieldConfig[]) {
   return z.object(schemaShape);
 }
 
-const FormPreview: React.FC<FormPreviewProps> = ({ form }) => {
-  const [previewStep, setPreviewStep] = useState(0);
+type PreviewProps = {
+  form: FormConfig;
+  previewStep: number;
+  setPreviewStep: (n: number) => void;
+  previewMode?: boolean;
+};
+
+function FormPreview({
+  form,
+  previewStep,
+  setPreviewStep,
+  previewMode = true
+}: PreviewProps) {
   const [formData, setFormData] = useState<Record<string, any>>({});
+
+  console.log('form', form);
 
   // Obtener campos del paso actual
   const stepFields = form.steps[previewStep]?.fields || [];
@@ -115,7 +124,6 @@ const FormPreview: React.FC<FormPreviewProps> = ({ form }) => {
     reset
   } = useForm({ resolver: zodResolver(schema) });
 
-  // Resetear valores cuando cambie el paso utilizando los datos guardados
   useEffect(() => {
     const defaultValues: Record<string, any> = {};
     stepFields.forEach((field) => {
@@ -124,171 +132,258 @@ const FormPreview: React.FC<FormPreviewProps> = ({ form }) => {
     reset(defaultValues);
   }, [previewStep, stepFields, formData, reset]);
 
-  const onSubmit = (data: Record<string, any>) => {
-    // Guardar datos de este paso
-    setFormData((prev) => ({ ...prev, ...data }));
-    if (previewStep < form.steps.length - 1) {
-      setPreviewStep((prev) => prev + 1);
-    } else {
-      // Formulario completo
-      console.log('Datos del formulario:', { ...formData, ...data });
-      alert('Formulario enviado con éxito (ver consola)');
+  // const onSubmit = (data: Record<string, any>) => {
+  //   setFormData((prev) => ({ ...prev, ...data }));
+  //   if (previewStep < form.steps.length - 1) {
+  //     setPreviewStep((prev) => prev + 1);
+  //   } else {
+  //     console.log('Datos del formulario:', { ...formData, ...data });
+  //     alert('Formulario enviado con éxito (ver consola)');
+  //   }
+  // };
+
+  const prefixCount =
+    form.type === 'multi-step'
+      ? form.steps
+          .slice(0, previewStep)
+          .reduce((acc, s) => acc + (s.fields?.length ?? 0), 0)
+      : 0;
+
+  const onNext = async () => {
+    if (!previewMode) {
+      const ok = await trigger();
+      if (!ok) return;
+    }
+    if (form.type === 'multi-step' && previewStep < form.steps.length - 1) {
+      setPreviewStep(previewStep + 1);
     }
   };
-
   const onBack = () => {
-    if (previewStep > 0) {
-      setPreviewStep((prev) => prev - 1);
-    }
+    if (form.type === 'multi-step' && previewStep > 0)
+      setPreviewStep(previewStep - 1);
   };
 
+  // dentro del panel de configuración general del Form
   return (
-    <div className="h-full overflow-y-auto p-4">
-      <h2 className="mb-2 text-xl font-semibold text-gray-800">
-        Previsualización
-      </h2>
-      {form.infoTop && (
-        <p className="mb-2 text-sm text-gray-600">{form.infoTop}</p>
-      )}
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4"
-      >
-        {stepFields.map((field) => (
-          <div key={field.id}>
-            <label className="block text-sm font-medium text-gray-700">
-              {field.label}
-              {field.required && <span className="text-red-500"> *</span>}
-            </label>
-            {field.type === 'text' && (
-              <input
-                type="text"
-                className={`mt-1 block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ${errors[field.name] ? 'border-red-500' : ''}`}
-                placeholder={field.placeholder || ''}
-                {...register(field.name)}
-              />
-            )}
-            {field.type === 'date' && (
-              <input
-                type="date"
-                className={`mt-1 block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ${errors[field.name] ? 'border-red-500' : ''}`}
-                {...register(field.name)}
-              />
-            )}
-            {field.type === 'textarea' && (
-              <textarea
-                rows={3}
-                className={`mt-1 block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ${errors[field.name] ? 'border-red-500' : ''}`}
-                placeholder={field.placeholder || ''}
-                {...register(field.name)}
-              />
-            )}
-            {field.type === 'select' && field.multiple && (
-              <Controller
-                control={control}
-                name={field.name}
-                defaultValue={[]}
-                render={({ field: rhf }) => {
-                  const value: string[] = Array.isArray(rhf.value)
-                    ? rhf.value
-                    : [];
+    <div className="flex h-full min-h-0 flex-col">
+      {/* Título fuera del fondo */}
+      <div className="shrink-0 px-4 pt-2">
+        <h2 className="mb-2 text-xl font-semibold text-gray-800">
+          Previsualización
+        </h2>
+        {form.infoTop && (
+          <p className="mb-2 text-sm text-gray-600">{form.infoTop}</p>
+        )}
+      </div>
+
+      {/* Área con fondo */}
+      <div className="relative min-h-0 flex-1 overflow-hidden">
+        {form.backgroundUrl && (
+          <>
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-center bg-no-repeat"
+              style={{
+                backgroundImage: `url(${form.backgroundUrl})`,
+                backgroundSize:
+                  form.backgroundMode === 'contain' ? 'contain' : 'cover'
+              }}
+            />
+            <div
+              aria-hidden
+              className={
+                form.backgroundTint === 'light'
+                  ? 'pointer-events-none absolute inset-0 bg-white/40'
+                  : form.backgroundTint === 'dark'
+                    ? 'pointer-events-none absolute inset-0 bg-black/35'
+                    : ''
+              }
+            />
+          </>
+        )}
+        <div className="relative h-full overflow-y-auto p-4">
+          <div className="grid min-h-full place-items-center">
+            <div className="w-full max-w-lg">
+              <form
+                onSubmit={handleSubmit(() => {})}
+                className="space-y-5 rounded-lg bg-transparent p-0"
+                noValidate
+              >
+                {stepFields.map((field, i) => {
+                  const qn = prefixCount + i + 1;
                   return (
                     <div
-                      role="group"
-                      aria-labelledby={`${field.name}-legend`}
-                      className="mt-2 space-y-2"
+                      key={field.id}
+                      className="space-y-2"
                     >
-                      {(field.options ?? []).map((opt) => {
-                        const checked = value.includes(opt.value);
-                        return (
-                          <label
-                            key={opt.value}
-                            className="flex cursor-pointer items-center gap-2"
-                          >
-                            <input
-                              type="checkbox"
-                              className="size-4 accent-indigo-600"
-                              checked={checked}
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                                  rhf.onChange([...value, opt.value]);
-                                } else {
-                                  rhf.onChange(
-                                    value.filter((v) => v !== opt.value)
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center text-white">
+                          <span className="grid size-6 place-content-center rounded-full border border-white/90 text-[11px] font-semibold">
+                            {qn}
+                          </span>
+                          {/* <span className="mx-2 h-px w-6 bg-white/80" /> */}
+                          {/* <span className="inline-block size-2 rotate-45 border-r-2 border-t-2 border-white/80" /> */}
+                        </div>
+                        <label className="block text-sm font-medium text-white drop-shadow">
+                          {field.label}
+                          {field.required && (
+                            <span className="text-red-300"> *</span>
+                          )}
+                        </label>
+                      </div>
+                      {field.type === 'text' && (
+                        <input
+                          type="text"
+                          className={`mt-1 block w-full rounded border border-white/80 bg-transparent text-sm text-white shadow-none placeholder:text-white/70 focus:border-white focus:ring-white/80 ${errors[field.name] ? 'border-red-300 focus:border-red-300 focus:ring-red-300/60' : ''}`}
+                          placeholder={field.placeholder || ''}
+                          {...register(field.name)}
+                        />
+                      )}
+
+                      {field.type === 'date' && (
+                        <input
+                          type="date"
+                          className={`mt-1 block w-full rounded border border-white/80 bg-transparent text-sm text-white shadow-none [color-scheme:dark] placeholder:text-white/70 focus:border-white focus:ring-white/80 ${errors[field.name] ? 'border-red-300 focus:border-red-300 focus:ring-red-300/60' : ''}`}
+                          {...register(field.name)}
+                        />
+                      )}
+
+                      {field.type === 'textarea' && (
+                        <textarea
+                          rows={4}
+                          className={`mt-1 block w-full rounded border border-white/80 bg-transparent text-sm text-white shadow-none placeholder:text-white/70 focus:border-white focus:ring-white/80 ${errors[field.name] ? 'border-red-300 focus:border-red-300 focus:ring-red-300/60' : ''}`}
+                          placeholder={field.placeholder || ''}
+                          {...register(field.name)}
+                        />
+                      )}
+                      {field.type === 'select' && field.multiple && (
+                        <Controller
+                          control={control}
+                          name={field.name}
+                          defaultValue={[]}
+                          render={({ field: rhf }) => {
+                            const value: string[] = Array.isArray(rhf.value)
+                              ? rhf.value
+                              : [];
+                            return (
+                              <div className="mt-1 space-y-2">
+                                {(field.options ?? []).map((opt) => {
+                                  const checked = value.includes(opt.value);
+                                  return (
+                                    <label
+                                      key={opt.value}
+                                      className="flex cursor-pointer items-center gap-2 text-white"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        checked={checked}
+                                        onChange={(e) => {
+                                          if (e.target.checked)
+                                            rhf.onChange([...value, opt.value]);
+                                          else
+                                            rhf.onChange(
+                                              value.filter(
+                                                (v) => v !== opt.value
+                                              )
+                                            );
+                                        }}
+                                        onBlur={rhf.onBlur}
+                                        className="
+                                          grid size-4 appearance-none place-content-center rounded
+                                          border border-white/90
+                                          before:hidden before:size-2 before:rounded-sm
+                                          before:bg-white
+                                          before:content-[''] checked:bg-transparent checked:before:block focus:outline-none focus:ring-2 focus:ring-white/60
+                                        "
+                                      />
+                                      <span className="text-sm">
+                                        {opt.label}
+                                      </span>
+                                    </label>
                                   );
-                                }
-                              }}
-                              onBlur={rhf.onBlur}
-                            />
-                            <span className="text-sm text-gray-800">
-                              {opt.label}
-                            </span>
-                          </label>
-                        );
-                      })}
+                                })}
+                              </div>
+                            );
+                          }}
+                        />
+                      )}
+                      {field.type === 'select' && !field.multiple && (
+                        <div className="mt-1 space-y-2">
+                          {(field.options ?? []).map((opt) => (
+                            <label
+                              key={opt.value}
+                              className="flex cursor-pointer items-center gap-2 text-white"
+                            >
+                              <input
+                                type="radio"
+                                value={opt.value}
+                                {...register(field.name)}
+                                className="
+                                  grid size-4 appearance-none place-content-center rounded-full
+                                  border border-white/90
+                                  before:hidden before:size-2 before:rounded-full
+                                  before:bg-white
+                                  before:content-[''] checked:bg-transparent checked:before:block focus:outline-none focus:ring-2 focus:ring-white/60
+                                "
+                              />
+                              <span className="text-sm">{opt.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                      {errors[field.name] && (
+                        <p className="mt-1 text-sm text-red-200">
+                          {(errors as any)[field.name]?.message?.toString()}
+                        </p>
+                      )}
+                      {field.helpText && (
+                        <p className="mt-1 text-xs text-white/80">
+                          {field.helpText}
+                        </p>
+                      )}
                     </div>
                   );
-                }}
-              />
-            )}
-            {field.type === 'select' && !field.multiple && (
-              <div
-                role="radiogroup"
-                aria-labelledby={`${field.name}-legend`}
-                className="mt-2 space-y-2"
-              >
-                {(field.options ?? []).map((opt) => (
-                  <label
-                    key={opt.value}
-                    className="flex cursor-pointer items-center gap-2"
-                  >
-                    <input
-                      type="radio"
-                      value={opt.value}
-                      {...register(field.name)}
-                      className="size-4 accent-indigo-600"
-                    />
-                    <span className="text-sm text-gray-800">{opt.label}</span>
-                  </label>
-                ))}
-              </div>
-            )}
+                })}
+                <div className="mt-2 flex items-center justify-between border-t border-white/30 pt-4">
+                  {form.type === 'multi-step' && previewStep > 0 && (
+                    <button
+                      type="button"
+                      onClick={onBack}
+                      className="rounded border border-white/70 bg-transparent px-4 py-2 text-sm text-white hover:bg-white/10"
+                    >
+                      Anterior
+                    </button>
+                  )}
 
-            {errors[field.name] && (
-              <p className="mt-1 text-sm text-red-600">
-                {(errors as any)[field.name]?.message?.toString()}
-              </p>
-            )}
-            {field.helpText && (
-              <p className="mt-1 text-xs text-gray-500">{field.helpText}</p>
-            )}
+                  {form.type === 'multi-step' ? (
+                    <button
+                      type="button"
+                      onClick={onNext}
+                      className="ml-auto rounded border border-white/80 bg-transparent px-4 py-2 text-sm text-white hover:bg-white/10"
+                    >
+                      {previewStep < form.steps.length - 1
+                        ? 'Siguiente'
+                        : 'Finalizar'}
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      className="ml-auto rounded border border-white/80 bg-transparent px-4 py-2 text-sm text-white hover:bg-white/10"
+                    >
+                      Enviar
+                    </button>
+                  )}
+                </div>
+              </form>
+              {form.infoBottom && (
+                <p className="mt-2 text-sm text-white/90">{form.infoBottom}</p>
+              )}
+            </div>
           </div>
-        ))}
-        <div className="flex items-center justify-between border-t pt-4">
-          {form.type === 'multi-step' && previewStep > 0 && (
-            <button
-              type="button"
-              onClick={onBack}
-              className="rounded border border-gray-300 bg-gray-100 px-4 py-2 text-sm text-gray-800 hover:bg-gray-200"
-            >
-              Anterior
-            </button>
-          )}
-          <button
-            type="submit"
-            className="ml-auto rounded bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-700"
-          >
-            {form.type === 'multi-step' && previewStep < form.steps.length - 1
-              ? 'Siguiente'
-              : 'Enviar'}
-          </button>
         </div>
-      </form>
-      {form.infoBottom && (
-        <p className="mt-2 text-sm text-gray-600">{form.infoBottom}</p>
-      )}
+      </div>
     </div>
   );
-};
+}
 
 export default FormPreview;

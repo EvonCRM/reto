@@ -1,82 +1,206 @@
-import { FormConfig, FormMeta, StoredForm, ThemeId } from '@/types/form';
+// lib/forms/forms-store.ts
+// ÚNICO punto de verdad para formularios en LocalStorage
 
-const LS_KEY = 'form-builder:forms';
+import type { FormConfig } from '@/types/form';
 
-function readAll(): StoredForm[] {
-  if (typeof window === 'undefined') return [];
+const FORMS_KEY = 'app:forms';
+const META_KEY = 'app:forms-meta';
+
+export type FormsDb<T> = Record<string, T>;
+
+export type FormMeta = {
+  id: string;
+  title?: string;
+  description?: string;
+  theme?: string;
+  coverUrl?: string;
+  type?: 'simple' | 'multi-step';
+  stepsCount?: number;
+  fieldsCount?: number;
+  updatedAt?: number;
+  createdAt?: number;
+};
+
+const isBrowser = () => typeof window !== 'undefined';
+function safeParse<T>(raw: string | null, fallback: T): T {
   try {
-    const raw = localStorage.getItem(LS_KEY);
-    return raw ? JSON.parse(raw) : [];
+    return raw ? (JSON.parse(raw) as T) : fallback;
   } catch {
-    return [];
+    return fallback;
   }
 }
 
-function writeAll(list: StoredForm[]) {
-  localStorage.setItem(LS_KEY, JSON.stringify(list));
+function readDb<T = any>(): FormsDb<T> {
+  if (!isBrowser()) return {} as FormsDb<T>;
+  return safeParse<FormsDb<T>>(localStorage.getItem(FORMS_KEY), {});
+}
+function writeDb<T = any>(db: FormsDb<T>) {
+  if (!isBrowser()) return;
+  localStorage.setItem(FORMS_KEY, JSON.stringify(db));
 }
 
-export function listForms(): FormMeta[] {
-  return readAll()
-    .sort((a, b) => +new Date(b.meta.updatedAt) - +new Date(a.meta.updatedAt))
-    .map((x) => x.meta);
+function readMeta(): FormsDb<FormMeta> {
+  if (!isBrowser()) return {};
+  return safeParse<FormsDb<FormMeta>>(localStorage.getItem(META_KEY), {});
+}
+function writeMeta(meta: FormsDb<FormMeta>) {
+  if (!isBrowser()) return;
+  localStorage.setItem(META_KEY, JSON.stringify(meta));
 }
 
-export function getFormById(id: string): StoredForm | undefined {
-  return readAll().find((f) => f.meta.id === id);
-}
-
-export function upsertForm(
-  config: FormConfig,
-  opts?: { id?: string; theme?: ThemeId; coverUrl?: string }
-): string {
-  const all = readAll();
-  const id = opts?.id ?? crypto.randomUUID();
-
-  const meta: FormMeta = {
+/** Calcula metadatos básicos a partir del FormConfig */
+function computeMetaFromForm(
+  id: string,
+  form: FormConfig,
+  prev?: FormMeta
+): FormMeta {
+  const stepsCount = form.steps?.length ?? 0;
+  const fieldsCount =
+    form.steps?.reduce((acc, s) => acc + (s.fields?.length ?? 0), 0) ?? 0;
+  return {
     id,
-    title: config.title || 'Sin título',
-    description: config.description ?? '',
-    type: config.type,
-    theme: opts?.theme ?? 'light',
-    coverUrl: opts?.coverUrl,
-    updatedAt: new Date().toISOString(),
-    fieldsCount: config.steps.reduce((acc, s) => acc + s.fields.length, 0),
-    stepsCount: config.steps.length
+    title: form.title,
+    description: form.description,
+    type: form.type,
+    stepsCount,
+    fieldsCount,
+    theme: prev?.theme ?? undefined,
+    coverUrl: prev?.coverUrl ?? form.backgroundUrl ?? undefined,
+    createdAt: prev?.createdAt ?? Date.now(),
+    updatedAt: Date.now()
   };
+}
 
-  const existingIdx = all.findIndex((f) => f.meta.id === id);
-  const stored: StoredForm = { meta, config };
+/** Crea o actualiza un form. Si no pasas id, genera uno. Devuelve el id. */
+export function upsertForm(
+  form: FormConfig,
+  opts?: { id?: string; theme?: string; coverUrl?: string }
+): string {
+  const id =
+    opts?.id ??
+    (isBrowser() ? crypto.randomUUID() : Math.random().toString(36).slice(2));
 
-  if (existingIdx >= 0) {
-    all[existingIdx] = stored;
-  } else {
-    all.unshift(stored);
-  }
-  writeAll(all);
+  const db = readDb<FormConfig>();
+  db[id] = form;
+  writeDb(db);
+
+  const mb = readMeta();
+  const prev = mb[id];
+  mb[id] = {
+    ...computeMetaFromForm(id, form, prev),
+    theme: opts?.theme ?? mb[id]?.theme,
+    coverUrl: opts?.coverUrl ?? mb[id]?.coverUrl ?? form.backgroundUrl
+  };
+  writeMeta(mb);
+
   return id;
 }
 
-export function duplicateForm(id: string): string | undefined {
-  const all = readAll();
-  const base = all.find((f) => f.meta.id === id);
-  if (!base) return;
-  const newId = crypto.randomUUID();
-  const copy: StoredForm = {
-    meta: {
-      ...base.meta,
-      id: newId,
-      title: base.meta.title + ' (Copia)',
-      updatedAt: new Date().toISOString()
-    },
-    config: { ...base.config, title: base.config.title + ' (Copia)' }
-  };
-  all.unshift(copy);
-  writeAll(all);
+export function getForm(id: string): FormConfig | null {
+  const db = readDb<FormConfig>();
+  const f = db[id] ?? null;
+  // Migración suave: si no trae backgroundUrl y meta tiene coverUrl, inyectar
+  if (f && !f.backgroundUrl) {
+    const mb = readMeta();
+    const cover = mb[id]?.coverUrl;
+    if (cover) f.backgroundUrl = cover;
+  }
+  return f;
+}
+
+/** Actualiza parcialmente un form existente (parcial profundo simple) */
+export function updateForm(
+  id: string,
+  patch: Partial<FormConfig>
+): FormConfig | null {
+  const db = readDb<FormConfig>();
+  const prev = db[id];
+  if (!prev) return null;
+  const merged = { ...prev, ...patch } as FormConfig;
+  db[id] = merged;
+  writeDb(db);
+
+  const mb = readMeta();
+  mb[id] = computeMetaFromForm(id, merged, mb[id]);
+  writeMeta(mb);
+
+  return merged;
+}
+
+export function deleteForm(id: string): boolean {
+  const db = readDb<FormConfig>();
+  const mb = readMeta();
+  const existed = !!db[id];
+  if (existed) {
+    delete db[id];
+    delete mb[id];
+    writeDb(db);
+    writeMeta(mb);
+  }
+  return existed;
+}
+
+export function duplicateForm(id: string): string | null {
+  const original = getForm(id);
+  if (!original) return null;
+  const clone: FormConfig = JSON.parse(JSON.stringify(original));
+  // Cambios visuales mínimos
+  clone.title = `${clone.title ?? 'Formulario'} (copia)`;
+  const newId = upsertForm(clone, {
+    theme: readMeta()[id]?.theme,
+    coverUrl: readMeta()[id]?.coverUrl ?? original.backgroundUrl
+  });
   return newId;
 }
 
-export function removeForm(id: string) {
-  const next = readAll().filter((f) => f.meta.id !== id);
-  writeAll(next);
+export function listForms(): FormMeta[] {
+  const mb = readMeta();
+  return Object.values(mb).sort(
+    (a, b) => (b.updatedAt ?? 0) - (a.updatedAt ?? 0)
+  );
+}
+
+export function getMeta(id: string): FormMeta | null {
+  const mb = readMeta();
+  return mb[id] ?? null;
+}
+
+export function updateMeta(
+  id: string,
+  patch: Partial<FormMeta>
+): FormMeta | null {
+  const mb = readMeta();
+  const prev = mb[id];
+  if (!prev) return null;
+  const next = { ...prev, ...patch, id, updatedAt: Date.now() };
+  mb[id] = next;
+  writeMeta(mb);
+  return next;
+}
+
+export function clearAllForms() {
+  if (!isBrowser()) return;
+  localStorage.removeItem(FORMS_KEY);
+  localStorage.removeItem(META_KEY);
+}
+
+/** Migra todos los forms: si no tienen backgroundUrl pero sí coverUrl en meta, inyecta */
+export function migrateFormsBackground() {
+  const db = readDb<FormConfig>();
+  const mb = readMeta();
+  let changed = 0;
+  for (const id of Object.keys(db)) {
+    const f = db[id];
+    if (!f.backgroundUrl && mb[id]?.coverUrl) {
+      f.backgroundUrl = mb[id]!.coverUrl;
+      db[id] = f;
+      mb[id] = computeMetaFromForm(id, f, mb[id]);
+      changed++;
+    }
+  }
+  if (changed > 0) {
+    writeDb(db);
+    writeMeta(mb);
+  }
+  return changed;
 }

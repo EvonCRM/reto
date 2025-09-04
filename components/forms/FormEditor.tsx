@@ -1,11 +1,27 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 import type { FieldConfig, FormConfig } from '@/types/form';
 
 import FieldEditor from './FieldEditor';
 import FieldList from './FieldList';
+
+// 1) Helper para generar defaultValues según los fields
+function buildDefaultValues(form: FormConfig): Record<string, any> {
+  const dv: Record<string, any> = {};
+  for (const step of form.steps) {
+    for (const f of step.fields) {
+      if (f.type === 'select' && (f as any).multiple) {
+        dv[f.name] = []; // selección múltiple → array
+      } else {
+        dv[f.name] = ''; // text, date, textarea, select simple
+      }
+    }
+  }
+  return dv;
+}
 
 interface FormEditorProps {
   form: FormConfig;
@@ -26,6 +42,8 @@ interface FormEditorProps {
 const FormEditor: React.FC<FormEditorProps> = ({
   form,
   currentStep,
+  setPreviewStep,
+  previewMode,
   updateForm,
   changeStep,
   addStep,
@@ -39,6 +57,18 @@ const FormEditor: React.FC<FormEditorProps> = ({
     | { mode: 'edit'; field: FieldConfig }
     | null
   >(null);
+  const defaultValues = useMemo(() => buildDefaultValues(form), [form]);
+
+  // 3) Crea RHF con esos defaults
+  const methods = useForm<Record<string, any>>({
+    defaultValues,
+    mode: 'onChange'
+  });
+
+  // 4) Cuando cambie el form (abrir otro id/template), resetea
+  useEffect(() => {
+    methods.reset(defaultValues);
+  }, [defaultValues, methods]);
 
   // Manejar cambio de tipo de formulario (simple vs multi-step)
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

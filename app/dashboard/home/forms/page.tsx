@@ -102,12 +102,12 @@ export default function FormsTabPage() {
                 >
                   ✏️ Editar
                 </Link>
-                <Link
-                  href={`/dashboard/forms/${m.id}`}
+                {/* <Link
+                  href={`/dashboard/home/forms/${m.id}`}
                   className="rounded border px-2 py-1 text-xs hover:bg-gray-50"
                 >
                   👀 Preview
-                </Link>
+                </Link> */}
               </div>
             </article>
           ))}

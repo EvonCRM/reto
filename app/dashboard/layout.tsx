@@ -5,7 +5,6 @@ import { redirect } from 'next/navigation';
 import { SidebarRenderer } from '@/components/dashboard/sidebar-renderer';
 import {
   Page,
-  PageBody,
   PageHeader,
   PagePrimaryBar,
   PageTitle

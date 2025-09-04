@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { getForm } from '@/lib/forms/forms-store';
 import { FieldConfig, FormConfig, FormStep } from '@/types/form';
 
 /**
@@ -13,7 +14,13 @@ function generateId() {
 
 const DRAFT_KEY = 'form-builder-draft';
 
-export default function useFormBuilder() {
+const defaultEmptyForm = (): FormConfig => ({
+  title: 'Formulario sin título',
+  type: 'simple',
+  steps: [{ id: 'step-1', title: 'Paso 1', fields: [] }]
+});
+
+export default function useFormBuilder(editingId?: string) {
   const emptyForm: FormConfig = {
     title: '',
     description: '',
@@ -29,16 +36,18 @@ export default function useFormBuilder() {
     ]
   };
 
-  const [form, setForm] = useState<FormConfig>(() => {
-    if (typeof window === 'undefined') return emptyForm;
-    try {
-      const stored = localStorage.getItem(DRAFT_KEY);
-      return stored ? (JSON.parse(stored) as FormConfig) : emptyForm;
-    } catch (err) {
-      console.error(err);
-      return emptyForm;
-    }
-  });
+  // const [form, setForm] = useState<FormConfig>(() => {
+  //   if (typeof window === 'undefined') return emptyForm;
+  //   try {
+  //     const stored = localStorage.getItem(DRAFT_KEY);
+  //     return stored ? (JSON.parse(stored) as FormConfig) : emptyForm;
+  //   } catch (err) {
+  //     console.error(err);
+  //     return emptyForm;
+  //   }
+  // });
+  const [form, setForm] = useState<FormConfig>(defaultEmptyForm());
+
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [isDirty, setIsDirty] = useState(false);
 
@@ -56,6 +65,17 @@ export default function useFormBuilder() {
     }, 2000);
     return () => clearTimeout(timeout);
   }, [form, isDirty]);
+
+  useEffect(() => {
+    if (!editingId) {
+      setForm(defaultEmptyForm());
+      setCurrentStep(0);
+      return;
+    }
+    const loaded = getForm(editingId);
+    setForm(loaded ?? defaultEmptyForm());
+    setCurrentStep(0);
+  }, [editingId]);
 
   /**
    * Actualiza propiedades de alto nivel del formulario (título, descripción, etc.).

@@ -1,3 +1,5 @@
+import { FontTheme } from '@/lib/fonts/fonts';
+
 export type FieldType = 'text' | 'date' | 'textarea' | 'select';
 
 export interface SelectOption {
@@ -64,11 +66,10 @@ export interface FormConfig {
   infoBottom?: string;
   type: 'simple' | 'multi-step';
   steps: FormStep[];
-
-  // NUEVO: imagen de fondo del formulario (opcional)
-  backgroundUrl?: string; // URL absoluta o relativa
-  backgroundMode?: 'cover' | 'contain'; // opcional, por defecto 'cover'
-  backgroundTint?: 'none' | 'dark' | 'light'; // opcional, para legibilidad
+  backgroundUrl?: string;
+  backgroundMode?: 'cover' | 'contain';
+  backgroundTint?: 'none' | 'dark' | 'light' | 'darker';
+  fontTheme?: FontTheme;
 }
 
 export type ThemeId = 'light' | 'ocean' | 'sunset' | 'terminal';

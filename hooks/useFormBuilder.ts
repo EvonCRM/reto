@@ -20,7 +20,12 @@ const defaultEmptyForm = (): FormConfig => ({
   steps: [{ id: 'step-1', title: 'Paso 1', fields: [] }]
 });
 
-export default function useFormBuilder(editingId?: string) {
+export default function useFormBuilder(
+  editingId?: string,
+  opts?: { startAtCover?: boolean }
+) {
+  const startAtCover = opts?.startAtCover ?? false;
+
   const emptyForm: FormConfig = {
     title: '',
     description: '',
@@ -48,7 +53,8 @@ export default function useFormBuilder(editingId?: string) {
   // });
   const [form, setForm] = useState<FormConfig>(defaultEmptyForm());
 
-  const [currentStep, setCurrentStep] = useState<number>(0);
+  const [currentStep, setCurrentStep] = useState<number>(startAtCover ? -1 : 0);
+
   const [isDirty, setIsDirty] = useState(false);
 
   // Auto‑guardado cada 2 segundos cuando hay cambios
@@ -95,6 +101,8 @@ export default function useFormBuilder(editingId?: string) {
     (index: number) => {
       if (index >= 0 && index < form.steps.length) {
         setCurrentStep(index);
+      } else {
+        setCurrentStep(-1);
       }
     },
     [form.steps.length]

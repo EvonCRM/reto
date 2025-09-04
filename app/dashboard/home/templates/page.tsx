@@ -20,15 +20,16 @@ export default function TemplatesPage() {
     const formCopy = structuredClone(tpl.form);
     formCopy.backgroundUrl = tpl.coverUrl;
     formCopy.backgroundMode = 'cover';
-    formCopy.backgroundTint = formCopy.backgroundTint ?? 'dark';
+    formCopy.backgroundTint = formCopy.backgroundTint ?? 'darker';
+    formCopy.fontTheme = formCopy.fontTheme ?? 'default';
 
     const normalized = toOneFieldPerStep(formCopy);
 
-    const newId = upsertForm(normalized, {
+    const id = upsertForm(normalized, {
       theme: tpl.theme,
       coverUrl: tpl.coverUrl
     });
-    router.push(`/dashboard/form-builder?id=${newId}&from=templates`);
+    router.push(`/dashboard/form-builder?id=${id}&from=templates`);
   };
 
   return (

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import useFormBuilder from '@/hooks/useFormBuilder';
@@ -37,6 +37,7 @@ type Props = {
 
 const FormBuilderScreen: React.FC<Props> = ({ editingId, from }) => {
   const router = useRouter();
+  const startAtCover = from === 'templates';
 
   // ← pasa el id al hook; el hook debe rehidratar cuando cambie
   const {
@@ -49,7 +50,7 @@ const FormBuilderScreen: React.FC<Props> = ({ editingId, from }) => {
     addField,
     updateField,
     removeField
-  } = useFormBuilder(editingId);
+  } = useFormBuilder(editingId, { startAtCover });
 
   const onSave = () => {
     const id = upsertForm(form, {
@@ -65,6 +66,10 @@ const FormBuilderScreen: React.FC<Props> = ({ editingId, from }) => {
   const onSaveAndExit = () => {
     router.push('/dashboard/home/forms');
   };
+
+  useEffect(() => {
+    if (from === 'templates') changeStep(-1);
+  }, [from, changeStep]);
 
   return (
     <div className="flex h-full min-h-0 flex-col md:flex-row md:divide-x">
@@ -110,8 +115,6 @@ const FormBuilderScreen: React.FC<Props> = ({ editingId, from }) => {
             addField={addField}
             updateField={updateField}
             removeField={removeField}
-            setPreviewStep={changeStep} // ← viene del hook del editor
-            previewMode={true}
           />
         </div>
       </section>
@@ -123,6 +126,7 @@ const FormBuilderScreen: React.FC<Props> = ({ editingId, from }) => {
           previewStep={currentStep}
           setPreviewStep={changeStep} // ← viene del hook del editor
           previewMode={true}
+          coverEnabled={true}
         />
       </section>
     </div>

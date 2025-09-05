@@ -31,9 +31,9 @@ function generateSchema(fields: FieldConfig[]) {
         let v: any = z.array(z.string());
         if (field.required) v = v.min(1, 'Selecciona al menos una opción');
         if (typeof f.minSelected === 'number')
-          v = v.min(f.minSelected, `Elige al menos ${f.minSelected}`);
+          v = v.min(f.minSelected, `Choose at least ${f.minSelected}`);
         if (typeof f.maxSelected === 'number')
-          v = v.max(f.maxSelected, `Elige como máximo ${f.maxSelected}`);
+          v = v.max(f.maxSelected, `Choose at most ${f.maxSelected}`);
         if (!f.allowCustom) {
           v = v.refine(
             (arr: string) => arr.every((val) => optionValues.includes(val)),
@@ -45,7 +45,7 @@ function generateSchema(fields: FieldConfig[]) {
         schemaShape[field.name] = v;
       } else {
         let v = z.string();
-        if (field.required) v = v.min(1, 'Campo requerido');
+        if (field.required) v = v.min(1, 'Required field');
         if (!f.allowCustom) {
           v = v.refine((val) => optionValues.includes(val), {
             message: 'Opción inválida'
@@ -54,25 +54,23 @@ function generateSchema(fields: FieldConfig[]) {
         schemaShape[field.name] = v;
       }
 
-      return; // <- MUY IMPORTANTE: no sigas con la lógica de strings
+      return;
     }
-
-    // --- AQUÍ SIGUE TU LÓGICA EXISTENTE PARA text/date/textarea ---
     let validator: z.ZodString = z.string();
     if (field.required) {
-      validator = validator.min(1, 'Campo requerido');
+      validator = validator.min(1, 'Required field');
     }
     const v = field.validations;
     if (v?.minLength) {
       validator = validator.min(
         v.minLength,
-        `Debe tener al menos ${v.minLength} caracteres`
+        `You must type at least ${v.minLength} characters`
       );
     }
     if (v?.maxLength) {
       validator = validator.max(
         v.maxLength,
-        `Debe tener máximo ${v.maxLength} caracteres`
+        `You must type at most ${v.maxLength} characters`
       );
     }
     if (v?.regex) {
@@ -113,6 +111,13 @@ function FormPreview({
   coverEnabled = true
 }: PreviewProps) {
   const [formData, setFormData] = useState<Record<string, any>>({});
+  const allFields = useMemo(
+    () => (form.steps ?? []).flatMap((s) => s.fields ?? []),
+    [form.steps]
+  );
+
+  // 2) Esquema global (no por paso)
+  const fullSchema = useMemo(() => generateSchema(allFields), [allFields]);
 
   const stepFields: FieldConfig[] = useMemo(() => {
     if (form.type === 'multi-step') {
@@ -123,6 +128,16 @@ function FormPreview({
     return form.steps?.[0]?.fields ?? [];
   }, [form.type, form.steps, previewStep]);
 
+  const defaultValues = useMemo(() => {
+    const d: Record<string, any> = {};
+    for (const f of allFields) {
+      if (f.type === 'select' && (f as FieldSelectConfig).multiple)
+        d[f.name] = [];
+      else d[f.name] = '';
+    }
+    return d;
+  }, [allFields]);
+
   const prefixCount = useMemo(() => {
     if (form.type !== 'multi-step' || previewStep < 0) return 0;
     return form.steps
@@ -130,31 +145,33 @@ function FormPreview({
       .reduce((acc, s) => acc + (s.fields?.length ?? 0), 0);
   }, [form.type, form.steps, previewStep]);
 
-  // ✅ schema: ok si hay 0 campos (objeto vacío)
-  const schema = useMemo(() => generateSchema(stepFields), [stepFields]);
-
-  // ✅ RHF
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
-    reset
-  } = useForm({ resolver: zodResolver(schema) });
+    reset,
+    trigger,
+    setFocus,
+    getValues,
+    watch
+  } = useForm({
+    resolver: zodResolver(fullSchema),
+    shouldUnregister: false,
+    defaultValues
+  });
 
-  // ✅ reset: no intentes setear valores si estás en portada
   useEffect(() => {
-    if (previewStep < 0) return; // portada: no resetees
+    if (previewStep < 0) return;
     const defaultValues: Record<string, any> = {};
     stepFields.forEach((field) => {
       defaultValues[field.name] =
         formData[field.name] ??
         (field.type === 'select' && (field as any).multiple ? [] : '');
     });
-    reset(defaultValues);
+    // reset(defaultValues);
   }, [previewStep, stepFields, formData, reset]);
 
-  // ✅ navegación robusta (clamp y handlers)
   const last =
     form.type === 'multi-step' ? Math.max(0, (form.steps?.length ?? 1) - 1) : 0;
 
@@ -171,10 +188,9 @@ function FormPreview({
       coverEnabled
     });
 
-    if (previewStep === -1) return; // ya estás en portada
+    if (previewStep === -1) return;
 
     if (previewStep === 0 && coverEnabledSafe) {
-      // primer paso → portada
       console.log('Going to cover: goto(-1)');
       return goto(-1);
     }
@@ -194,11 +210,22 @@ function FormPreview({
     setPreviewStep(clampedValue);
   };
 
+  function focusFirstError() {
+    const firstKey = Object.keys(errors ?? {})[0];
+    if (firstKey) setFocus(firstKey as any, { shouldSelect: true });
+  }
+
   const onNext = async () => {
     if (previewStep === -1) return goto(0);
-    if (!previewMode) {
-      // const ok = await trigger(); // si decides validar, añade trigger desde useForm
-      // if (!ok) return;
+
+    // Nombres de campos del paso actual
+    const names = stepFields.map((f) => f.name);
+    const ok = await trigger(names); // 👈 valida SOLO el paso visible
+    if (!ok) {
+      // Enfoca el primer error del paso
+      const firstErr = names.find((n) => !!(errors as any)[n]);
+      if (firstErr) setFocus(firstErr as any);
+      return;
     }
     if (previewStep < last) return goto(previewStep + 1);
   };
@@ -206,14 +233,19 @@ function FormPreview({
   const showCover = coverEnabledSafe && previewStep === -1;
 
   useEffect(() => {
-    // si hay portada -> ir a -1; si no -> asegurar 0
     if (form.cover?.enabled) {
       setPreviewStep(-1);
     } else {
       setPreviewStep((prev) => (prev < 0 ? 0 : prev));
     }
-    // ⚠️ dependencia clave: form.cover?.enabled
   }, [form.cover?.enabled]);
+
+  useEffect(() => {
+    const sub = watch((vals) => {
+      console.log('snapshot', vals);
+    });
+    return () => sub.unsubscribe();
+  }, [watch]);
 
   return (
     <div className="flex h-[70vh] min-h-0 flex-col">
@@ -328,7 +360,6 @@ function FormPreview({
                               <Controller
                                 control={control}
                                 name={field.name}
-                                defaultValue={[]}
                                 render={({ field: rhf }) => {
                                   const value: string[] = Array.isArray(
                                     rhf.value
@@ -363,13 +394,9 @@ function FormPreview({
                                                   );
                                               }}
                                               onBlur={rhf.onBlur}
-                                              className="
-                                              grid size-4 appearance-none place-content-center rounded
-                                              border border-white/90
-                                              before:hidden before:size-2 before:rounded-sm
-                                              before:bg-white
-                                              before:content-[''] checked:bg-transparent checked:before:block focus:outline-none focus:ring-2 focus:ring-white/60
-                                            "
+                                              className="grid size-4 appearance-none place-content-center rounded border border-white/90
+                             before:hidden before:size-2 before:rounded-sm before:bg-white before:content-['']
+                             checked:bg-transparent checked:before:block focus:outline-none focus:ring-2 focus:ring-white/60"
                                             />
                                             <span className="text-sm">
                                               {opt.label}
@@ -382,7 +409,6 @@ function FormPreview({
                                 }}
                               />
                             )}
-
                             {field.type === 'select' && !field.multiple && (
                               <div className="mt-1 space-y-2">
                                 {(field.options ?? []).map((opt) => (

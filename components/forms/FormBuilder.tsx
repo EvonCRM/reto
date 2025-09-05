@@ -107,7 +107,7 @@ const FormBuilderScreen: React.FC<Props> = ({ editingId, from }) => {
             href="/dashboard/home/forms"
             className="text-sm text-muted-foreground hover:underline"
           >
-            ← Back to My forms
+            ← {`Back to ${from === 'templates' ? 'Templates' : 'My forms'}`}
           </a>
 
           {/* Indicador de guardado */}

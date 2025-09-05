@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
+import { useAutosaveForm } from '@/hooks/useAutoSaveForm';
 import useFormBuilder from '@/hooks/useFormBuilder';
 import { upsertForm } from '@/lib/forms/forms-store';
 
@@ -52,27 +53,18 @@ const FormBuilderScreen: React.FC<Props> = ({ editingId, from }) => {
     removeField
   } = useFormBuilder(editingId, { startAtCover });
 
-  const onSave = () => {
-    const id = upsertForm(form, {
-      id: editingId, // respeta id si editas; crea nuevo si undefined
-      theme: 'ocean',
-      coverUrl: form.backgroundUrl ?? undefined
-    });
-    router.replace(
-      `/dashboard/form-builder?id=${id}${from ? `&from=${from}` : ''}`
-    );
-  };
-
-  // components/forms/FormBuilder.tsx
-  const onSaveAndExit = () => {
-    // guarda SIEMPRE antes de salir
-    const id = upsertForm(form, {
-      id: editingId, // si hay id, actualiza; si no, crea
-      theme: 'ocean',
-      coverUrl: form.backgroundUrl ?? undefined
-    });
-    router.push('/dashboard/home/forms');
-  };
+  const {
+    status,
+    lastSavedAt,
+    id: liveId
+  } = useAutosaveForm({
+    form,
+    id: editingId,
+    onFirstSave: (newId) => {
+      router.replace(`/dashboard/form-builder?id=${newId}`);
+    },
+    delay: 700
+  });
 
   useEffect(() => {
     if (from === 'templates') changeStep(-1);
@@ -82,7 +74,7 @@ const FormBuilderScreen: React.FC<Props> = ({ editingId, from }) => {
     <div className="flex h-full min-h-0 flex-col md:flex-row md:divide-x">
       {/* Panel de edición */}
       <section className="flex min-h-0 flex-1 flex-col">
-        <div className="shrink-0 border-b px-4 py-3">
+        {/* <div className="shrink-0 border-b px-4 py-3">
           <div className="flex items-center gap-3">
             <a
               href={
@@ -108,6 +100,22 @@ const FormBuilderScreen: React.FC<Props> = ({ editingId, from }) => {
                 Save and exit
               </button>
             </div>
+          </div>
+        </div> */}
+        <div className="flex items-center gap-3 border-b px-4 py-3">
+          <a
+            href="/dashboard/home/forms"
+            className="text-sm text-muted-foreground hover:underline"
+          >
+            ← Back to My forms
+          </a>
+
+          {/* Indicador de guardado */}
+          <div className="ml-auto text-xs text-muted-foreground">
+            {status === 'saving' && 'Saving…'}
+            {status === 'saved' &&
+              `Saved${lastSavedAt ? ` • ${new Date(lastSavedAt).toLocaleTimeString()}` : ''}`}
+            {status === 'error' && 'Save error'}
           </div>
         </div>
 

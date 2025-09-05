@@ -501,7 +501,7 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
             "
           >
-            Cancelar
+            Cancel
           </button>
           <button
             type="button"
@@ -513,7 +513,7 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
             "
           >
-            Save
+            Add
           </button>
         </div>
       </div>

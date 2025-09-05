@@ -28,8 +28,6 @@ const defaultEmptyForm = (): FormConfig => ({
   backgroundTint: 'dark',
   cover: {
     enabled: true,
-    title: 'Welcome!',
-    subtitle: 'Click to begin',
     ctaLabel: 'Start'
   }
 });
@@ -39,21 +37,6 @@ export default function useFormBuilder(
   opts?: { startAtCover?: boolean }
 ) {
   const startAtCover = opts?.startAtCover ?? false;
-
-  const emptyForm: FormConfig = {
-    title: '',
-    description: '',
-    infoTop: '',
-    infoBottom: '',
-    type: 'simple',
-    steps: [
-      {
-        id: generateId(),
-        title: 'Step 1',
-        fields: []
-      }
-    ]
-  };
 
   // const [form, setForm] = useState<FormConfig>(() => {
   //   if (typeof window === 'undefined') return emptyForm;
@@ -231,7 +214,7 @@ export default function useFormBuilder(
    * Reinicia el constructor eliminando cualquier borrador.
    */
   const resetForm = useCallback(() => {
-    setForm(emptyForm);
+    setForm(defaultEmptyForm);
     setCurrentStep(0);
     setIsDirty(false);
     try {

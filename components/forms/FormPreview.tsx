@@ -110,13 +110,10 @@ function FormPreview({
   previewStep,
   setPreviewStep,
   previewMode = true,
-  coverEnabled = false
+  coverEnabled = true
 }: PreviewProps) {
   const [formData, setFormData] = useState<Record<string, any>>({});
 
-  console.log('form', form);
-
-  // ✅ stepFields: NO indexar el array si estás en portada (-1)
   const stepFields: FieldConfig[] = useMemo(() => {
     if (form.type === 'multi-step') {
       if (previewStep < 0) return []; // portada
@@ -126,7 +123,6 @@ function FormPreview({
     return form.steps?.[0]?.fields ?? [];
   }, [form.type, form.steps, previewStep]);
 
-  // ✅ prefixCount: solo calcula cuando hay índice válido
   const prefixCount = useMemo(() => {
     if (form.type !== 'multi-step' || previewStep < 0) return 0;
     return form.steps
@@ -209,6 +205,16 @@ function FormPreview({
 
   const showCover = coverEnabledSafe && previewStep === -1;
 
+  useEffect(() => {
+    // si hay portada -> ir a -1; si no -> asegurar 0
+    if (form.cover?.enabled) {
+      setPreviewStep(-1);
+    } else {
+      setPreviewStep((prev) => (prev < 0 ? 0 : prev));
+    }
+    // ⚠️ dependencia clave: form.cover?.enabled
+  }, [form.cover?.enabled]);
+
   return (
     <div className="flex h-[70vh] min-h-0 flex-col">
       {/* Título fuera del fondo */}
@@ -259,7 +265,7 @@ function FormPreview({
                 <FormCover
                   form={form}
                   onStart={onStart}
-                  ctaLabel="Comenzar"
+                  ctaLabel="Start"
                 />
               ) : (
                 <div className="grid min-h-full place-items-center">

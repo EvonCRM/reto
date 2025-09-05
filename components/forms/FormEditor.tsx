@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { COVER_OPTIONS } from '@/lib/forms/form-cover-options';
 import type { FieldConfig, FormConfig } from '@/types/form';
 
 import FieldEditor from './FieldEditor';
@@ -37,13 +38,12 @@ interface FormEditorProps {
     updates: Partial<FieldConfig>
   ) => void;
   removeField: (stepIndex: number, fieldId: string) => void;
+  coverEnabled?: boolean;
 }
 
 const FormEditor: React.FC<FormEditorProps> = ({
   form,
   currentStep,
-  setPreviewStep,
-  previewMode,
   updateForm,
   changeStep,
   addStep,
@@ -87,6 +87,18 @@ const FormEditor: React.FC<FormEditorProps> = ({
     }
     return (
       <div className="mt-2 flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => changeStep(-1)}
+          className={[
+            'inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition',
+            currentStep === -1
+              ? 'bg-[hsl(var(--active))] text-white border border-transparent hover:opacity-95 focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]'
+              : 'border border-foreground/30 text-foreground hover:border-[hsl(var(--active))] focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]'
+          ].join(' ')}
+        >
+          Cover
+        </button>
         {form.steps.map((step, index) => {
           const active = currentStep === index;
           return (
@@ -101,7 +113,7 @@ const FormEditor: React.FC<FormEditorProps> = ({
                   ? 'bg-[hsl(var(--active))] text-white border border-transparent hover:opacity-95 focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]'
                   : 'border border-foreground/30 text-foreground hover:border-[hsl(var(--active))] focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]'
               ].join(' ')}
-              title={step.title || `Paso ${index + 1}`}
+              title={step.title || `Step ${index + 1}`}
             >
               <span
                 className={[
@@ -112,7 +124,7 @@ const FormEditor: React.FC<FormEditorProps> = ({
                 {index + 1}
               </span>
               <span className="line-clamp-1">
-                {step.title || `Paso ${index + 1}`}
+                {step.title || `Step ${index + 1}`}
               </span>
             </button>
           );
@@ -130,7 +142,7 @@ const FormEditor: React.FC<FormEditorProps> = ({
           title="Agregar paso"
         >
           <span className="text-base leading-none">＋</span>
-          Paso
+          Step
         </button>
       </div>
     );
@@ -208,7 +220,7 @@ const FormEditor: React.FC<FormEditorProps> = ({
             rows={2}
             value={form.description || ''}
             onChange={(e) => updateForm({ description: e.target.value })}
-            placeholder="Descripción (opcional)"
+            placeholder="Description (optional)"
             className="
               mt-1 block w-full rounded-md
               border border-foreground/30 bg-background px-3 py-2 text-sm
@@ -231,9 +243,64 @@ const FormEditor: React.FC<FormEditorProps> = ({
               focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
             "
           >
-            <option value="simple">Simple (un solo paso)</option>
-            <option value="multi-step">Multi-paso</option>
+            <option value="simple">Single step</option>
+            <option value="multi-step">Multi-step</option>
           </select>
+        </div>
+        <div className="mt-6 space-y-3">
+          {/* Select de imagen de fondo */}
+          <label className="block text-sm font-medium">Background image</label>
+          <select
+            className="mt-1 block w-full rounded-md border border-foreground/30 bg-background px-3 py-2 text-sm
+               hover:border-[hsl(var(--active))] focus:border-[hsl(var(--active))]
+               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]"
+            value={form.backgroundUrl ?? ''}
+            onChange={(e) => updateForm({ backgroundUrl: e.target.value })}
+          >
+            {COVER_OPTIONS.map((opt: any, index: number) => (
+              <option
+                key={index}
+                value={opt.url}
+              >
+                {opt.label}
+              </option>
+            ))}
+          </select>
+
+          {/* Ajustes finos opcionales */}
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block text-sm">
+              Mode
+              <select
+                className="mt-1 block w-full rounded-md border border-foreground/30 bg-background px-3 py-2 text-sm"
+                value={form.backgroundMode ?? 'cover'}
+                onChange={(e) =>
+                  updateForm({
+                    backgroundMode: e.target.value as 'cover' | 'contain'
+                  })
+                }
+              >
+                <option value="cover">cover</option>
+                <option value="contain">contain</option>
+              </select>
+            </label>
+            <label className="block text-sm">
+              Tint
+              <select
+                className="mt-1 block w-full rounded-md border border-foreground/30 bg-background px-3 py-2 text-sm"
+                value={form.backgroundTint ?? 'dark'}
+                onChange={(e) =>
+                  updateForm({ backgroundTint: e.target.value as any })
+                }
+              >
+                <option value="none">none</option>
+                <option value="light">light</option>
+                <option value="medium">medium</option>
+                <option value="dark">dark</option>
+                <option value="darker">darker</option>
+              </select>
+            </label>
+          </div>
         </div>
       </div>
 
@@ -241,30 +308,34 @@ const FormEditor: React.FC<FormEditorProps> = ({
       {renderSteps()}
 
       {/* Lista de campos del paso actual */}
-      <div className="mt-6">
-        <h3 className="text-lg font-medium">
-          Fields for step {form.type === 'multi-step' ? currentStep + 1 : ''}
-        </h3>
+      {currentStep >= 0 ? (
+        <div className="mt-6">
+          <h3 className="text-lg font-medium">
+            Fields for step {form.type === 'multi-step' ? currentStep + 1 : ''}
+          </h3>
 
-        <FieldList
-          fields={currentStepObj?.fields || []}
-          onEdit={handleEditField}
-          onDelete={handleDeleteField}
-        />
+          <FieldList
+            fields={currentStepObj?.fields || []}
+            onEdit={handleEditField}
+            onDelete={handleDeleteField}
+          />
 
-        <button
-          type="button"
-          onClick={handleAddField}
-          className="
+          <button
+            type="button"
+            onClick={handleAddField}
+            className="
             mt-3 inline-flex items-center gap-1 rounded-md
             border border-foreground/30 px-3 py-2 text-sm
             hover:border-[hsl(var(--active))]
             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
           "
-        >
-          + Add field
-        </button>
-      </div>
+          >
+            + Add field
+          </button>
+        </div>
+      ) : (
+        <></>
+      )}
 
       {/* Editor de campo */}
       {fieldEditor && (

@@ -14,7 +14,7 @@ type Props = {
 export default function FormCover({
   form,
   onStart,
-  ctaLabel = 'Comenzar'
+  ctaLabel = 'Start'
 }: Props) {
   const bg = form.backgroundUrl;
   const tint = form.backgroundTint ?? 'dark';

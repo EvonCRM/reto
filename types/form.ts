@@ -70,6 +70,12 @@ export interface FormConfig {
   backgroundMode?: 'cover' | 'contain';
   backgroundTint?: 'none' | 'dark' | 'light' | 'darker';
   fontTheme?: FontTheme;
+  cover?: {
+    enabled: boolean;
+    title?: string;
+    subtitle?: string;
+    ctaLabel?: string; // Texto del botón "Comenzar"
+  };
 }
 
 export type ThemeId = 'light' | 'ocean' | 'sunset' | 'terminal';

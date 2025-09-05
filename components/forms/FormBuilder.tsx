@@ -83,14 +83,14 @@ const FormBuilderScreen: React.FC<Props> = ({ editingId, from }) => {
                   ? '/dashboard/home/templates'
                   : '/dashboard/home/forms'
               }
-              className="text-sm text-gray-600 hover:underline"
+              className="text-sm hover:underline"
             >
-              ← Mis formularios
+              ← {`${from === 'templates' ? 'Templates' : 'My forms'}`}
             </a>
             <div className="ml-auto flex items-center gap-2">
               <button
                 onClick={onSave}
-                className="rounded bg-emerald-600 px-3 py-2 text-sm text-white hover:bg-emerald-700"
+                className="rounded border px-3 py-2 text-sm hover:bg-gray-50"
               >
                 💾 Guardar
               </button>

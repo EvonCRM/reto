@@ -147,84 +147,117 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
   };
 
   return (
-    <div className="mt-4 rounded border p-4 shadow-md">
-      <h3 className="mb-2 font-semibold text-gray-800">
-        {mode === 'create' ? 'Agregar campo' : 'Editar campo'}
+    <div className="mt-4 rounded-md border border-foreground/30 p-4 text-foreground shadow-sm">
+      <h3 className="mb-2 font-semibold">
+        {mode === 'create' ? 'Add field' : 'Edit field'}
       </h3>
+
       <div className="space-y-3">
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Tipo
-          </label>
+          <label className="block text-sm font-medium">Type</label>
           <select
-            className="mt-1 block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             value={type}
             onChange={(e) => setType(e.target.value as FieldType)}
+            className="
+              mt-1 block w-full rounded-md border border-foreground/30 bg-background px-3
+              py-2 text-sm
+              hover:border-[hsl(var(--active))]
+              focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+            "
           >
-            <option value="text">Texto</option>
-            <option value="date">Fecha</option>
-            <option value="textarea">Área de texto</option>
-            <option value="select">Select</option>
+            <option value="text">Text</option>
+            <option value="date">Date</option>
+            <option value="textarea">Paragraph</option>
+            <option value="select">Multiple Option</option>
           </select>
         </div>
+
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Etiqueta
-          </label>
+          <label className="block text-sm font-medium">Label</label>
           <input
-            className="mt-1 block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             type="text"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
             placeholder="Nombre"
+            className="
+              mt-1 block w-full rounded-md border border-foreground/30 bg-background px-3
+              py-2
+              text-sm placeholder:text-muted-foreground
+              hover:border-[hsl(var(--active))]
+              focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+            "
           />
         </div>
+
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Placeholder
-          </label>
+          <label className="block text-sm font-medium">Placeholder</label>
           <input
-            className="mt-1 block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             type="text"
             value={placeholder}
             onChange={(e) => setPlaceholder(e.target.value)}
             placeholder="Escribe aquí..."
+            className="
+              mt-1 block w-full rounded-md border border-foreground/30 bg-background px-3
+              py-2
+              text-sm placeholder:text-muted-foreground
+              hover:border-[hsl(var(--active))]
+              focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+            "
           />
         </div>
+
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Texto de ayuda
-          </label>
+          <label className="block text-sm font-medium">Help text</label>
           <input
-            className="mt-1 block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             type="text"
             value={helpText}
             onChange={(e) => setHelpText(e.target.value)}
             placeholder="Descripción opcional"
+            className="
+              mt-1 block w-full rounded-md border border-foreground/30 bg-background px-3
+              py-2
+              text-sm placeholder:text-muted-foreground
+              hover:border-[hsl(var(--active))]
+              focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+            "
           />
         </div>
+
         <div className="flex items-center gap-2">
           <input
             id="required"
             type="checkbox"
-            className="size-4 rounded border-gray-300 text-indigo-600"
             checked={required}
             onChange={(e) => setRequired(e.target.checked)}
+            className="
+              size-4 rounded
+              border border-foreground/50 bg-transparent
+              text-foreground
+              accent-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2
+              focus-visible:ring-[hsl(var(--active))]
+            "
           />
           <label
             htmlFor="required"
-            className="text-sm text-gray-700"
+            className="text-sm"
           >
-            Requerido
+            Required
           </label>
         </div>
+
         {type === 'select' && (
-          <div className="mt-3 space-y-3 rounded border p-3">
+          <div className="mt-3 space-y-3 rounded-md border border-foreground/30 p-3">
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
                 checked={multiple}
                 onChange={(e) => setMultiple(e.target.checked)}
+                className="
+                  size-4 rounded
+                  border border-foreground/50 bg-transparent
+                  accent-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2
+                  focus-visible:ring-[hsl(var(--active))]
+                "
               />
               <span>Selección múltiple</span>
             </label>
@@ -236,13 +269,18 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
                   <input
                     type="number"
                     min={0}
-                    className="mt-1 rounded border px-2 py-1"
                     value={minSelected ?? ''}
                     onChange={(e) =>
                       setMinSelected(
                         e.target.value ? Number(e.target.value) : undefined
                       )
                     }
+                    className="
+                      mt-1 rounded-md border border-foreground/30 bg-background px-2
+                      py-1 text-sm
+                      hover:border-[hsl(var(--active))]
+                      focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+                    "
                   />
                 </label>
                 <label className="flex flex-col text-sm">
@@ -250,13 +288,18 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
                   <input
                     type="number"
                     min={0}
-                    className="mt-1 rounded border px-2 py-1"
                     value={maxSelected ?? ''}
                     onChange={(e) =>
                       setMaxSelected(
                         e.target.value ? Number(e.target.value) : undefined
                       )
                     }
+                    className="
+                      mt-1 rounded-md border border-foreground/30 bg-background px-2
+                      py-1 text-sm
+                      hover:border-[hsl(var(--active))]
+                      focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+                    "
                   />
                 </label>
               </div>
@@ -267,19 +310,31 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
                 type="checkbox"
                 checked={allowCustom}
                 onChange={(e) => setAllowCustom(e.target.checked)}
+                className="
+                  size-4 rounded
+                  border border-foreground/50 bg-transparent
+                  accent-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2
+                  focus-visible:ring-[hsl(var(--active))]
+                "
               />
               <span>Permitir valores fuera de las opciones</span>
             </label>
 
             <div className="space-y-2">
               <div className="text-sm font-medium">Opciones</div>
+
               {options.map((opt, idx) => (
                 <div
                   key={idx}
                   className="grid grid-cols-5 gap-2"
                 >
                   <input
-                    className="col-span-2 rounded border px-2 py-1 text-sm"
+                    className="
+                      col-span-2 rounded-md border border-foreground/30 bg-background px-2
+                      py-1 text-sm
+                      hover:border-[hsl(var(--active))]
+                      focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+                    "
                     placeholder="Etiqueta"
                     value={opt.label}
                     onChange={(e) =>
@@ -287,7 +342,12 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
                     }
                   />
                   <input
-                    className="col-span-2 rounded border px-2 py-1 text-sm"
+                    className="
+                      col-span-2 rounded-md border border-foreground/30 bg-background px-2
+                      py-1 text-sm
+                      hover:border-[hsl(var(--active))]
+                      focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+                    "
                     placeholder="Valor"
                     value={opt.value}
                     onChange={(e) =>
@@ -296,18 +356,28 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
                   />
                   <button
                     type="button"
-                    className="rounded border px-2 py-1 text-sm hover:bg-gray-50"
                     onClick={() => removeOption(idx)}
+                    className="
+                      rounded-md border border-foreground/30 px-2
+                      py-1 text-sm
+                      hover:border-[hsl(var(--active))]
+                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+                    "
                   >
-                    Eliminar
+                    Delete
                   </button>
                 </div>
               ))}
 
               <button
                 type="button"
-                className="rounded border px-2 py-1 text-sm hover:bg-gray-50"
                 onClick={addOption}
+                className="
+                  rounded-md border border-foreground/30 px-2
+                  py-1 text-sm
+                  hover:border-[hsl(var(--active))]
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+                "
               >
                 Agregar opción
               </button>
@@ -315,53 +385,25 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
           </div>
         )}
 
-        {/* Validaciones adicionales para campos de texto */}
-        {type === 'text' || type === 'textarea' ? (
+        {/* Validaciones adicionales para text/textarea */}
+        {(type === 'text' || type === 'textarea') && (
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Longitud mínima
-              </label>
-              <input
-                type="number"
-                min="0"
-                className="mt-1 block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                value={validations.minLength ?? ''}
-                onChange={(e) =>
-                  onValidationChange(
-                    'minLength',
-                    e.target.value ? Number(e.target.value) : undefined
-                  )
-                }
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Longitud máxima
-              </label>
-              <input
-                type="number"
-                min="0"
-                className="mt-1 block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                value={validations.maxLength ?? ''}
-                onChange={(e) =>
-                  onValidationChange(
-                    'maxLength',
-                    e.target.value ? Number(e.target.value) : undefined
-                  )
-                }
-              />
-            </div>
+            {/* 1) Selección de tipo de validación */}
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Validación regex
+              <label className="block text-sm font-medium">
+                Field validation
               </label>
               <select
-                className="mt-1 block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                 value={validations.regex ?? ''}
                 onChange={(e) =>
                   onValidationChange('regex', e.target.value || undefined)
                 }
+                className="
+          mt-1 block w-full rounded-md
+          border border-foreground/30 bg-background px-3 py-2 text-sm
+          hover:border-[hsl(var(--active))]
+          focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+        "
               >
                 <option value="">Sin validación</option>
                 <option value="phone">Teléfono (10 dígitos)</option>
@@ -370,39 +412,106 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
                 <option value="custom">Personalizado</option>
               </select>
             </div>
+
+            {/* 2) Solo si es personalizado: regex + longitudes */}
             {validations.regex === 'custom' && (
-              <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Regex personalizada
-                </label>
-                <input
-                  type="text"
-                  className="mt-1 block w-full rounded border-gray-300 font-mono text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  value={validations.customRegex ?? ''}
-                  onChange={(e) =>
-                    onValidationChange(
-                      'customRegex',
-                      e.target.value || undefined
-                    )
-                  }
-                  placeholder="Ingrese patrón regex"
-                />
-              </div>
+              <>
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium">
+                    Regex personalizada
+                  </label>
+                  <input
+                    type="text"
+                    value={validations.customRegex ?? ''}
+                    onChange={(e) =>
+                      onValidationChange(
+                        'customRegex',
+                        e.target.value || undefined
+                      )
+                    }
+                    placeholder="Ingrese patrón regex"
+                    className="
+              mt-1 block w-full rounded-md border border-foreground/30
+              bg-background px-3 py-2 font-mono text-sm
+              hover:border-[hsl(var(--active))]
+              focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+            "
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium">
+                    Longitud mínima
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={validations.minLength ?? ''}
+                    onChange={(e) =>
+                      onValidationChange(
+                        'minLength',
+                        e.target.value ? Number(e.target.value) : undefined
+                      )
+                    }
+                    className="
+              mt-1 block w-full rounded-md
+              border border-foreground/30 bg-background px-3 py-2 text-sm
+              hover:border-[hsl(var(--active))]
+              focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+            "
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium">
+                    Longitud máxima
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={validations.maxLength ?? ''}
+                    onChange={(e) =>
+                      onValidationChange(
+                        'maxLength',
+                        e.target.value ? Number(e.target.value) : undefined
+                      )
+                    }
+                    className="
+              mt-1 block w-full rounded-md
+              border border-foreground/30 bg-background px-3 py-2 text-sm
+              hover:border-[hsl(var(--active))]
+              focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+            "
+                  />
+                </div>
+              </>
             )}
           </div>
-        ) : null}
+        )}
+
+        {/* Acciones */}
         <div className="mt-4 flex justify-end gap-2">
           <button
             type="button"
             onClick={onCancel}
-            className="rounded border border-gray-300 bg-gray-100 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            className="
+              rounded-md border border-foreground/30 px-4
+              py-2 text-sm
+              hover:border-[hsl(var(--active))]
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+            "
           >
             Cancelar
           </button>
           <button
             type="button"
             onClick={handleSave}
-            className="rounded border border-indigo-600 bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-700"
+            className="
+              rounded-md border border-foreground/30 px-4
+              py-2 text-sm
+              hover:border-[hsl(var(--active))]
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+            "
           >
             Guardar
           </button>

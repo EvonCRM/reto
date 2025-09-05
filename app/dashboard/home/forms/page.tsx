@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { PlusIcon, Trash } from 'lucide-react';
 
 import HomeTabs from '@/components/layout/HomeTabs';
 import { deleteForm, listForms } from '@/lib/forms/forms-store';
@@ -28,32 +29,38 @@ export default function FormsTabPage() {
         <HomeTabs />
         <Link
           href="/dashboard/form-builder?from=forms"
-          className="rounded bg-indigo-600 px-3 py-2 text-sm text-white hover:bg-indigo-700"
+          className="inline-flex items-center gap-1 rounded-md bg-[hsl(var(--active))] px-3 py-2 text-sm text-white shadow-sm hover:bg-[hsl(var(--active))]/90"
         >
-          ➕ Nuevo
+          <PlusIcon className="w-5" />
+          Create
         </Link>
       </div>
+
       {/* Filtros */}
       <div className="flex items-center gap-2">
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Buscar formularios…"
-          className="rounded border px-3 py-2 text-sm"
+          placeholder="Search..."
+          className="
+            h-9 w-full max-w-xs rounded-md border border-input bg-background
+            px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+          "
         />
-        <div className="ml-auto text-xs text-gray-500">
+        <div className="ml-auto text-xs text-muted-foreground">
           {filtered.length} resultado(s)
         </div>
       </div>
 
       {/* Grid / Empty */}
       {filtered.length === 0 ? (
-        <div className="rounded-xl border bg-white p-8 text-center text-gray-600">
+        <div className="rounded-xl border bg-card p-8 text-center text-muted-foreground">
           Aún no tienes formularios. ¡Crea el primero! ✨
           <div className="mt-3">
             <Link
               href="/dashboard/form-builder?from=forms"
-              className="rounded bg-indigo-600 px-3 py-2 text-sm text-white hover:bg-indigo-700"
+              className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground shadow-sm hover:bg-primary/90"
             >
               Crear formulario
             </Link>
@@ -64,54 +71,63 @@ export default function FormsTabPage() {
           {filtered.map((m) => (
             <article
               key={m.id}
-              className="flex min-h-[300px] w-[260px] flex-col overflow-hidden rounded-xl border bg-white shadow-sm transition hover:shadow-md"
+              className="
+                flex min-h-[300px] w-[260px] flex-col overflow-hidden rounded-xl
+                border bg-card text-card-foreground shadow-sm transition hover:shadow-md
+              "
             >
               <div
-                className="h-24 w-full bg-cover bg-center"
+                className="h-24 w-full bg-muted bg-cover bg-center"
                 style={{
-                  backgroundImage: m.coverUrl
-                    ? `url(${m.coverUrl})`
-                    : 'linear-gradient(135deg,#e0e7ff,#fde68a)'
+                  backgroundImage: m.coverUrl ? `url(${m.coverUrl})` : undefined
                 }}
               />
+
               <div className="flex-1 space-y-2 p-4">
                 <div className="flex items-center gap-2">
-                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] capitalize">
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] capitalize">
                     {m.type}
                   </span>
-                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px]">
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-[11px]">
                     {m.theme}
                   </span>
-                  <span className="ml-auto text-[11px] text-gray-500">
+                  <span className="ml-auto text-[11px] text-muted-foreground">
                     {m.stepsCount} pasos · {m.fieldsCount} campos
                   </span>
                 </div>
+
                 <h3 className="line-clamp-1 text-sm font-semibold">
                   {m.title}
                 </h3>
+
                 {m.description && (
-                  <p className="line-clamp-2 text-xs text-gray-600">
+                  <p className="line-clamp-2 text-xs text-muted-foreground">
                     {m.description}
                   </p>
                 )}
               </div>
+
               {/* Acciones (misma altura que "Editar") */}
               <div className="my-2 flex items-center justify-evenly gap-2 p-2">
                 <Link
                   href={`/dashboard/form-builder?id=${m.id}&from=forms`}
-                  className="rounded border px-2 py-1 text-xs hover:bg-gray-50
-               dark:border-zinc-700 dark:hover:bg-zinc-800"
+                  className="
+                    rounded border border-input bg-background px-2 py-1 text-xs
+                    hover:bg-accent hover:text-accent-foreground
+                  "
                 >
-                  ✏️ Editar
+                  ✏️ Edit
                 </Link>
 
-                <Link
+                {/* <Link
                   href={`/dashboard/forms/${m.id}`}
-                  className="rounded border px-2 py-1 text-xs hover:bg-gray-50
-               dark:border-zinc-700 dark:hover:bg-zinc-800"
+                  className="
+                    rounded border border-input bg-background px-2 py-1 text-xs
+                    hover:bg-accent hover:text-accent-foreground
+                  "
                 >
                   👀 Preview
-                </Link>
+                </Link> */}
 
                 {/* Eliminar alineado a la derecha */}
                 <button
@@ -120,14 +136,15 @@ export default function FormsTabPage() {
                     e.stopPropagation();
                     e.preventDefault();
                     if (!window.confirm('¿Eliminar este formulario?')) return;
-                    deleteForm(m.id); // tu función del store
-                    setItems((prev) => prev.filter((x) => x.id !== m.id)); // refrescar UI
+                    deleteForm(m.id);
+                    setItems((prev) => prev.filter((x) => x.id !== m.id));
                   }}
                   title="Eliminar formulario"
                   aria-label="Eliminar formulario"
-                  className=" ml-auto inline-flex items-center gap-1 rounded-md border border-red-500/30 px-2 py-1 text-xs text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500/50 dark:border-red-400/30 dark:text-red-400 dark:hover:bg-red-500/10"
+                  className="inline-flex items-center gap-1 rounded border border-input bg-background px-2 py-1 text-xs text-black hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-white"
                 >
-                  🗑 Eliminar
+                  <Trash className="size-4" />
+                  <span>Delete</span>
                 </button>
               </div>
             </article>
@@ -138,7 +155,7 @@ export default function FormsTabPage() {
       {/* FAB móvil opcional */}
       <Link
         href="/dashboard/form-builder?from=forms"
-        className="fixed bottom-6 right-6 rounded-full bg-indigo-600 p-4 text-white shadow-lg hover:bg-indigo-700 sm:hidden"
+        className="fixed bottom-6 right-6 rounded-full bg-primary p-4 text-primary-foreground shadow-lg hover:bg-primary/90 sm:hidden"
         aria-label="Crear formulario"
       >
         +

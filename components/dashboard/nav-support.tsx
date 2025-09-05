@@ -32,7 +32,7 @@ export function NavSupport({
   return (
     <SidebarGroup {...other}>
       <SidebarMenu>
-        <SidebarMenuItem>
+        {/* <SidebarMenuItem>
           <SidebarMenuButton
             type="button"
             tooltip="Invite member"
@@ -53,7 +53,7 @@ export function NavSupport({
             <MessageCircleIcon className="size-4 shrink-0" />
             <span>Feedback</span>
           </SidebarMenuButton>
-        </SidebarMenuItem>
+        </SidebarMenuItem> */}
       </SidebarMenu>
     </SidebarGroup>
   );

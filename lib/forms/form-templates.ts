@@ -24,7 +24,6 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
       title: 'Formulario de contacto',
       description: 'Cuéntanos cómo podemos ayudarte.',
       type: 'simple',
-      infoTop: 'Responderemos a la brevedad.',
       fontTheme: 'elegant', // Lora
       backgroundTint: 'dark', // buen contraste con texto blanco
       steps: [

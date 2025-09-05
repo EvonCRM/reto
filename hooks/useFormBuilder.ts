@@ -15,7 +15,7 @@ function generateId() {
 const DRAFT_KEY = 'form-builder-draft';
 
 const defaultEmptyForm = (): FormConfig => ({
-  title: 'Formulario sin título',
+  title: 'Untitled',
   type: 'simple',
   steps: [{ id: 'step-1', title: 'Paso 1', fields: [] }]
 });

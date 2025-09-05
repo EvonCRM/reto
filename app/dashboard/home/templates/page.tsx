@@ -36,20 +36,24 @@ export default function TemplatesPage() {
     <section className="space-y-5">
       <div className="flex items-center justify-between">
         <HomeTabs />
-        {/* <Link
+        {/* CTA opcional
+        <Link
           href="/dashboard/form-builder?from=forms"
-          className="rounded bg-indigo-600 px-3 py-2 text-sm text-white hover:bg-indigo-700"
+          className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           ➕ Nuevo
         </Link> */}
       </div>
+
       <div className="flex items-center justify-between">
-        <h1 className="text-sm font-semibold">Elige un template</h1>
+        <h1 className="text-sm font-semibold text-foreground">
+          Choose a template
+        </h1>
         <Link
           href="/dashboard/home/templates"
-          className="text-xs text-indigo-600 hover:underline"
+          className="rounded text-xs text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          ← Volver
+          ← Back
         </Link>
       </div>
 
@@ -57,29 +61,40 @@ export default function TemplatesPage() {
         {FORM_TEMPLATES.map((t) => (
           <article
             key={t.id}
-            className="min-h-[320px] w-full max-w-[320px] overflow-hidden rounded-xl border bg-white shadow-sm transition hover:shadow-md"
+            className="
+              min-h-[320px] w-full max-w-[320px] overflow-hidden rounded-xl
+              border border-input bg-card text-card-foreground shadow-sm
+              transition hover:shadow-md
+            "
           >
             <div
-              className="h-28 w-full bg-cover bg-center"
+              className="h-28 w-full bg-muted bg-cover bg-center"
               style={{
-                backgroundImage: `url(${t.coverUrl})`
+                backgroundImage: t.coverUrl ? `url(${t.coverUrl})` : undefined
               }}
             />
+
             <div className="space-y-2 p-4">
               <div className="flex items-center gap-2">
-                <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px]">
+                <span className="rounded-full bg-muted px-2 py-0.5 text-[11px]">
                   {t.theme}
                 </span>
               </div>
+
               <h3 className="line-clamp-1 text-sm font-semibold">{t.name}</h3>
-              <p className="line-clamp-2 text-xs text-gray-600">
+              <p className="line-clamp-2 text-xs text-muted-foreground">
                 {t.description}
               </p>
             </div>
+
             <div className="flex items-center gap-2 p-4 pt-0">
               <button
                 onClick={() => onUseTemplate(t.id)}
-                className="w-full rounded bg-indigo-600 px-3 py-2 text-sm text-white hover:bg-indigo-700"
+                className="
+                  w-full rounded-md bg-[hsl(var(--active))] px-3 py-2 text-sm
+                  text-white shadow-sm hover:opacity-95
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+                "
               >
                 Usar este template
               </button>

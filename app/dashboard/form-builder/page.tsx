@@ -12,7 +12,7 @@ export default function FormBuilderPage() {
   return (
     <main className="max-w-8xl mx-auto py-2">
       <h1 className="mb-4 text-xl font-semibold">
-        Crea formularios dinámicos con pasos y validaciones en tiempo real.
+        Create dynamic forms with steps and extra validations in real time
       </h1>
       <div className="rounded-lg border shadow-sm">
         <FormBuilder />

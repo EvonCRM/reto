@@ -48,6 +48,7 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 240 5.9% 90%;
     --sidebar-ring: 240 10% 3.9%;
+    --active: 243 75% 58.6%;
   }
 
   .dark {

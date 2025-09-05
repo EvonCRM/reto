@@ -28,19 +28,8 @@ export default function FormCover({
       aria-label="Portada del formulario"
     >
       {/* Fondo */}
-      {bg && (
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(${bg})`,
-            backgroundSize:
-              form.backgroundMode === 'contain' ? 'contain' : 'cover'
-          }}
-        />
-      )}
       {/* Overlay */}
-      <div
+      {/* <div
         aria-hidden
         className={clsx(
           'absolute inset-0',
@@ -54,7 +43,7 @@ export default function FormCover({
                   ? 'bg-black/10'
                   : 'bg-transparent'
         )}
-      />
+      /> */}
 
       {/* Contenido */}
       <div className="relative grid min-h-[320px] place-items-center p-8 text-center sm:min-h-[420px]">

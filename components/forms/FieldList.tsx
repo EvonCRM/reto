@@ -10,36 +10,54 @@ interface FieldListProps {
 
 const FieldList: React.FC<FieldListProps> = ({ fields, onEdit, onDelete }) => {
   return (
-    <div className="mt-4 space-y-2">
+    <div className="mt-4 space-y-2 text-foreground">
       {fields.length === 0 ? (
-        <p className="text-sm text-gray-500">No hay campos en este paso.</p>
+        <p className="text-sm text-muted-foreground">
+          No hay campos en este paso.
+        </p>
       ) : (
         <ul className="space-y-2">
           {fields.map((field) => (
             <li
               key={field.id}
-              className="flex items-center justify-between rounded border bg-gray-50 p-2 hover:bg-gray-100"
+              className="
+                flex items-center justify-between rounded-md
+                border border-foreground/30 p-2
+                transition-colors hover:border-[hsl(var(--active))]
+              "
             >
               <div className="flex flex-col">
-                <span className="font-medium text-gray-800">{field.label}</span>
-                <span className="text-xs text-gray-500">
-                  Tipo: {field.type} {field.required ? '· Requerido' : ''}
+                <span className="font-medium">{field.label}</span>
+                <span className="text-xs text-muted-foreground">
+                  Type: {field.type} {field.required ? '· Required' : ''}
                 </span>
               </div>
+
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  className="rounded border border-indigo-600 px-2 py-1 text-xs text-indigo-600 hover:bg-indigo-50"
                   onClick={() => onEdit(field)}
+                  className="
+                    inline-flex items-center gap-1 rounded-md border border-foreground/30 px-2
+                    py-1 text-xs text-foreground
+                    hover:border-[hsl(var(--active))]
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+                  "
                 >
-                  Editar
+                  Edit
                 </button>
+
                 <button
                   type="button"
-                  className="rounded border border-red-600 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
                   onClick={() => onDelete(field.id)}
+                  className="
+                    inline-flex items-center gap-1 rounded-md border border-foreground/30 px-2
+                    py-1 text-xs text-foreground
+                    hover:border-[hsl(var(--active))]
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+                  "
                 >
-                  Eliminar
+                  Delete
                 </button>
               </div>
             </li>

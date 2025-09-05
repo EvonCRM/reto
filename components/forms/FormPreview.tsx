@@ -210,15 +210,10 @@ function FormPreview({
   const showCover = coverEnabledSafe && previewStep === -1;
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
+    <div className="flex h-[70vh] min-h-0 flex-col">
       {/* Título fuera del fondo */}
-      <div className="shrink-0 px-4 pt-2">
-        <h2 className="mb-2 text-xl font-semibold text-gray-800">
-          Previsualización
-        </h2>
-        {form.infoTop && (
-          <p className="mb-2 text-sm text-gray-600">{form.infoTop}</p>
-        )}
+      <div className="shrink-0 px-4 py-2">
+        <h2 className="text-xl font-semibold">Preview</h2>
       </div>
 
       {/* Área con fondo */}

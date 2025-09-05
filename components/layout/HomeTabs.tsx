@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const TABS = [
-  { href: '/dashboard/home/forms', label: 'Mis formularios', emoji: '🧰' },
+  { href: '/dashboard/home/forms', label: 'My forms', emoji: '🧰' },
   { href: '/dashboard/home/templates', label: 'Templates', emoji: '🎨' }
 ];
 
@@ -12,8 +12,8 @@ export default function HomeTabNav() {
   const pathname = usePathname();
   return (
     <div
-      className="inline-flex overflow-hidden rounded-lg border"
       role="tablist"
+      className="inline-flex overflow-hidden rounded-lg border border-input bg-background"
     >
       {TABS.map((t, i) => {
         const active = pathname.startsWith(t.href);
@@ -25,8 +25,11 @@ export default function HomeTabNav() {
             aria-selected={active}
             className={[
               'px-4 py-2 text-sm transition',
-              active ? 'bg-indigo-600 text-white' : 'bg-white hover:bg-gray-50',
-              i !== 0 ? 'border-l' : ''
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+              i !== 0 ? 'border-l border-input' : '',
+              active
+                ? 'bg-[hsl(var(--active))] text-white'
+                : 'bg-background text-foreground hover:bg-accent hover:text-accent-foreground'
             ].join(' ')}
           >
             <span className="mr-1">{t.emoji}</span>

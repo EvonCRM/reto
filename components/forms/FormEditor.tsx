@@ -86,27 +86,51 @@ const FormEditor: React.FC<FormEditorProps> = ({
       return null;
     }
     return (
-      <div className="mt-2 flex items-center gap-2">
-        {form.steps.map((step, index) => (
-          <button
-            key={step.id}
-            type="button"
-            className={`rounded border px-3 py-1 text-sm ${
-              currentStep === index
-                ? 'bg-indigo-600 text-white'
-                : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-            }`}
-            onClick={() => changeStep(index)}
-          >
-            {step.title || `Paso ${index + 1}`}
-          </button>
-        ))}
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        {form.steps.map((step, index) => {
+          const active = currentStep === index;
+          return (
+            <button
+              key={step.id}
+              type="button"
+              onClick={() => changeStep(index)}
+              aria-current={active ? 'step' : undefined}
+              className={[
+                'inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition',
+                active
+                  ? 'bg-[hsl(var(--active))] text-white border border-transparent hover:opacity-95 focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]'
+                  : 'border border-foreground/30 text-foreground hover:border-[hsl(var(--active))] focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]'
+              ].join(' ')}
+              title={step.title || `Paso ${index + 1}`}
+            >
+              <span
+                className={[
+                  'grid size-5 place-content-center rounded-full text-[11px] font-semibold border',
+                  active ? 'border-white/80' : 'border-foreground/30'
+                ].join(' ')}
+              >
+                {index + 1}
+              </span>
+              <span className="line-clamp-1">
+                {step.title || `Paso ${index + 1}`}
+              </span>
+            </button>
+          );
+        })}
+
         <button
           type="button"
           onClick={addStep}
-          className="rounded bg-green-600 px-3 py-1 text-sm text-white hover:bg-green-700"
+          className="
+            inline-flex items-center gap-2 rounded-md border border-foreground/30 px-3
+            py-1.5 text-sm text-foreground
+            hover:border-[hsl(var(--active))]
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+          "
+          title="Agregar paso"
         >
-          + Paso
+          <span className="text-base leading-none">＋</span>
+          Paso
         </button>
       </div>
     );
@@ -156,72 +180,59 @@ const FormEditor: React.FC<FormEditorProps> = ({
   };
 
   return (
-    <div className=" overflow-y-visible p-4">
-      <h2 className="text-xl font-semibold text-gray-800">
-        Editor de formulario
-      </h2>
+    <div className="overflow-y-visible p-4 text-foreground">
+      <h2 className="text-xl font-semibold">Form Editor</h2>
+
       {/* Configuración general */}
       <div className="mt-4 space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Título
-          </label>
+          <label className="block text-sm font-medium">Form title</label>
           <input
             type="text"
-            className="mt-1 block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             value={form.title}
             onChange={(e) => updateForm({ title: e.target.value })}
-            placeholder="Título del formulario"
+            placeholder="Form title"
+            className="
+              mt-1 block w-full rounded-md
+              border border-foreground/30 bg-background px-3 py-2 text-sm
+              placeholder:text-muted-foreground
+              hover:border-[hsl(var(--active))]
+              focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+            "
           />
         </div>
+
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Descripción
-          </label>
+          <label className="block text-sm font-medium">Description</label>
           <textarea
-            className="mt-1 block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             rows={2}
             value={form.description || ''}
             onChange={(e) => updateForm({ description: e.target.value })}
             placeholder="Descripción (opcional)"
+            className="
+              mt-1 block w-full rounded-md
+              border border-foreground/30 bg-background px-3 py-2 text-sm
+              placeholder:text-muted-foreground
+              hover:border-[hsl(var(--active))]
+              focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+            "
           />
         </div>
-        {/*Commented fields in case we need them */}
-        {/* <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Información superior
-          </label>
-          <textarea
-            className="mt-1 block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            rows={2}
-            value={form.infoTop || ''}
-            onChange={(e) => updateForm({ infoTop: e.target.value })}
-            placeholder="Texto informativo arriba del formulario (opcional)"
-          />
-        </div>
+
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Información inferior
-          </label>
-          <textarea
-            className="mt-1 block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            rows={2}
-            value={form.infoBottom || ''}
-            onChange={(e) => updateForm({ infoBottom: e.target.value })}
-            placeholder="Texto informativo debajo del formulario (opcional)"
-          />
-        </div> */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Tipo de formulario
-          </label>
+          <label className="block text-sm font-medium">Form Type</label>
           <select
-            className="mt-1 block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             value={form.type}
             onChange={handleTypeChange}
+            className="
+              mt-1 block w-full rounded-md
+              border border-foreground/30 bg-background px-3 py-2 text-sm
+              hover:border-[hsl(var(--active))]
+              focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+            "
           >
             <option value="simple">Simple (un solo paso)</option>
-            <option value="multi-step">Multi‑paso</option>
+            <option value="multi-step">Multi-paso</option>
           </select>
         </div>
       </div>
@@ -231,20 +242,27 @@ const FormEditor: React.FC<FormEditorProps> = ({
 
       {/* Lista de campos del paso actual */}
       <div className="mt-6">
-        <h3 className="text-lg font-medium text-gray-800">
-          Campos del paso {form.type === 'multi-step' ? currentStep + 1 : ''}
+        <h3 className="text-lg font-medium">
+          Fields for step {form.type === 'multi-step' ? currentStep + 1 : ''}
         </h3>
+
         <FieldList
           fields={currentStepObj?.fields || []}
           onEdit={handleEditField}
           onDelete={handleDeleteField}
         />
+
         <button
           type="button"
           onClick={handleAddField}
-          className="mt-3 rounded bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700"
+          className="
+            mt-3 inline-flex items-center gap-1 rounded-md
+            border border-foreground/30 px-3 py-2 text-sm
+            hover:border-[hsl(var(--active))]
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
+          "
         >
-          + Agregar campo
+          + Add field
         </button>
       </div>
 

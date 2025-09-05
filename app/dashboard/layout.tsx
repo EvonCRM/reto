@@ -10,6 +10,7 @@ import {
   PageTitle
 } from '@/components/ui/page';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Routes } from '@/constants/routes';
 import { getProfile } from '@/data/account/get-profile';
 import { dedupedAuth } from '@/lib/auth';
@@ -61,7 +62,8 @@ export default async function DashboardLayout({
           <Page>
             <PageHeader>
               <PagePrimaryBar>
-                <PageTitle>Form Builder</PageTitle>
+                <PageTitle>My workspace</PageTitle>
+                <ThemeToggle />
               </PagePrimaryBar>
             </PageHeader>
             <div className="max-w-8xl mx-auto w-full px-4 py-6 sm:px-6 sm:py-8">

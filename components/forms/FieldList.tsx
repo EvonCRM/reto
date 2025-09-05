@@ -13,7 +13,7 @@ const FieldList: React.FC<FieldListProps> = ({ fields, onEdit, onDelete }) => {
     <div className="mt-4 space-y-2 text-foreground">
       {fields.length === 0 ? (
         <p className="text-sm text-muted-foreground">
-          No hay campos en este paso.
+          There are no fields for this step.
         </p>
       ) : (
         <ul className="space-y-2">

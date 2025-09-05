@@ -178,7 +178,7 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
             type="text"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
-            placeholder="Nombre"
+            placeholder="Question title"
             className="
               mt-1 block w-full rounded-md border border-foreground/30 bg-background px-3
               py-2
@@ -195,7 +195,7 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
             type="text"
             value={placeholder}
             onChange={(e) => setPlaceholder(e.target.value)}
-            placeholder="Escribe aquí..."
+            placeholder="Type here..."
             className="
               mt-1 block w-full rounded-md border border-foreground/30 bg-background px-3
               py-2
@@ -205,8 +205,8 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
             "
           />
         </div>
-
-        <div>
+        {/* Help Text */}
+        {/* <div>
           <label className="block text-sm font-medium">Help text</label>
           <input
             type="text"
@@ -221,7 +221,7 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
               focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
             "
           />
-        </div>
+        </div> */}
 
         <div className="flex items-center gap-2">
           <input
@@ -405,11 +405,11 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
           focus:border-[hsl(var(--active))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
         "
               >
-                <option value="">Sin validación</option>
-                <option value="phone">Teléfono (10 dígitos)</option>
-                <option value="email">Correo electrónico</option>
+                <option value="">No validation</option>
+                <option value="phone">Phone (10 dígits)</option>
+                <option value="email">Email</option>
                 <option value="curp">CURP</option>
-                <option value="custom">Personalizado</option>
+                <option value="custom">Custom</option>
               </select>
             </div>
 
@@ -513,7 +513,7 @@ const FieldEditor: React.FC<FieldEditorProps> = ({
               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--active))]
             "
           >
-            Guardar
+            Save
           </button>
         </div>
       </div>

@@ -63,7 +63,14 @@ const FormBuilderScreen: React.FC<Props> = ({ editingId, from }) => {
     );
   };
 
+  // components/forms/FormBuilder.tsx
   const onSaveAndExit = () => {
+    // guarda SIEMPRE antes de salir
+    const id = upsertForm(form, {
+      id: editingId, // si hay id, actualiza; si no, crea
+      theme: 'ocean',
+      coverUrl: form.backgroundUrl ?? undefined
+    });
     router.push('/dashboard/home/forms');
   };
 
@@ -92,13 +99,13 @@ const FormBuilderScreen: React.FC<Props> = ({ editingId, from }) => {
                 onClick={onSave}
                 className="rounded border px-3 py-2 text-sm hover:bg-gray-50"
               >
-                💾 Guardar
+                💾 Save
               </button>
               <button
                 onClick={onSaveAndExit}
                 className="rounded border px-3 py-2 text-sm hover:bg-gray-50"
               >
-                Guardar y salir
+                Save and exit
               </button>
             </div>
           </div>
@@ -115,6 +122,7 @@ const FormBuilderScreen: React.FC<Props> = ({ editingId, from }) => {
             addField={addField}
             updateField={updateField}
             removeField={removeField}
+            coverEnabled={true}
           />
         </div>
       </section>

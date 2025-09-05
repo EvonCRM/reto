@@ -428,7 +428,7 @@ function FormPreview({
                               onClick={onBack}
                               className="rounded border border-white/70 bg-transparent px-4 py-2 text-sm text-white hover:bg-white/10"
                             >
-                              {previewStep > 0 ? 'Anterior' : 'Inicio'}
+                              Back
                             </button>
                             <button
                               type="button"
@@ -436,8 +436,8 @@ function FormPreview({
                               className="ml-auto rounded border border-white/80 bg-transparent px-4 py-2 text-sm text-white hover:bg-white/10"
                             >
                               {previewStep < form.steps.length - 1
-                                ? 'Siguiente'
-                                : 'Finalizar'}
+                                ? 'Next'
+                                : 'Send Form'}
                             </button>
                           </>
                         )}

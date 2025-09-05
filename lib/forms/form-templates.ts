@@ -1,5 +1,5 @@
 // lib/form-templates.ts
-import type { FontTheme } from '@/lib/fonts';
+import type { FontTheme } from '@/lib/fonts/fonts';
 import type { FormConfig } from '@/types/form';
 
 export type TemplateMeta = {
@@ -12,47 +12,46 @@ export type TemplateMeta = {
 };
 
 export const FORM_TEMPLATES: TemplateMeta[] = [
-  // CONTACTO (profesional, serif elegante)
   {
     id: 'contact-basic',
-    name: 'Contacto básico',
-    description: 'Nombre, correo, teléfono y mensaje.',
+    name: 'Basic contact',
+    description: 'Name, email, phone and message.',
     theme: 'elegant',
     coverUrl:
-      'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1800&auto=format&fit=crop', // escritorio/papel
+      'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1800&auto=format&fit=crop',
     form: {
-      title: 'Formulario de contacto',
-      description: 'Cuéntanos cómo podemos ayudarte.',
+      title: 'Contact form',
+      description: 'Tell us how we can help.',
       type: 'simple',
-      fontTheme: 'elegant', // Lora
-      backgroundTint: 'dark', // buen contraste con texto blanco
+      fontTheme: 'elegant',
+      backgroundTint: 'dark',
       steps: [
         {
           id: 'step-contact',
-          title: 'Tus datos',
+          title: 'Your info',
           fields: [
             {
               id: 'full-name',
               type: 'text',
-              label: 'Nombre completo',
+              label: 'Full name',
               name: 'full-name',
-              placeholder: 'Tu nombre y apellidos',
+              placeholder: 'Your first and last name',
               required: true,
               validations: { minLength: 3, maxLength: 80 }
             },
             {
               id: 'email',
               type: 'text',
-              label: 'Correo electrónico',
+              label: 'Email',
               name: 'email',
-              placeholder: 'tucorreo@ejemplo.com',
+              placeholder: 'you@example.com',
               required: true,
               validations: { regex: 'email' }
             },
             {
               id: 'phone',
               type: 'text',
-              label: 'Teléfono',
+              label: 'Phone',
               name: 'phone',
               placeholder: '5512345678',
               required: false,
@@ -61,22 +60,22 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
             {
               id: 'topic',
               type: 'select',
-              label: 'Motivo de contacto',
+              label: 'Contact reason',
               name: 'topic',
               required: true,
               options: [
-                { label: 'Soporte', value: 'support' },
-                { label: 'Ventas', value: 'sales' },
-                { label: 'Facturación', value: 'billing' },
-                { label: 'Otro', value: 'other' }
+                { label: 'Support', value: 'support' },
+                { label: 'Sales', value: 'sales' },
+                { label: 'Billing', value: 'billing' },
+                { label: 'Other', value: 'other' }
               ]
             },
             {
               id: 'message',
               type: 'textarea',
-              label: 'Mensaje',
+              label: 'Message',
               name: 'message',
-              placeholder: 'Escribe los detalles…',
+              placeholder: 'Share the details…',
               required: true,
               validations: { minLength: 10, maxLength: 600 }
             }
@@ -86,29 +85,29 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
     }
   },
 
-  // EVENTO / RSVP (moderna, sans)
+  // EVENT / RSVP
   {
     id: 'event-rsvp',
-    name: 'Registro a evento',
-    description: 'Confirma asistencia y preferencias.',
+    name: 'Event RSVP',
+    description: 'Confirm attendance and preferences.',
     theme: 'event',
     coverUrl:
-      'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1800&auto=format&fit=crop', // público/evento
+      'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1800&auto=format&fit=crop',
     form: {
-      title: 'Registro al evento',
-      description: 'Confirma tu asistencia y preferencias de sesión.',
+      title: 'Event registration',
+      description: 'Confirm your attendance and session preferences.',
       type: 'multi-step',
-      fontTheme: 'event', // Poppins
+      fontTheme: 'event',
       backgroundTint: 'dark',
       steps: [
         {
-          id: 'datos',
-          title: 'Datos personales',
+          id: 'intro',
+          title: 'Your info',
           fields: [
             {
               id: 'name',
               type: 'text',
-              label: 'Nombre',
+              label: 'Full name',
               name: 'name',
               required: true,
               validations: { minLength: 2, maxLength: 60 }
@@ -124,26 +123,26 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
             {
               id: 'company',
               type: 'text',
-              label: 'Empresa',
+              label: 'Company',
               name: 'company',
               required: false
             }
           ]
         },
         {
-          id: 'preferencias',
-          title: 'Preferencias',
+          id: 'preferences',
+          title: 'Preferences',
           fields: [
             {
               id: 'track',
               type: 'select',
-              label: 'Track de interés',
+              label: 'Track of interest',
               name: 'track',
               required: true,
               options: [
                 { label: 'Frontend', value: 'fe' },
                 { label: 'Backend', value: 'be' },
-                { label: 'IA/ML', value: 'ai' }
+                { label: 'AI/ML', value: 'ai' }
               ]
             },
             {
@@ -156,7 +155,7 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
               minSelected: 0,
               maxSelected: 3,
               options: [
-                { label: 'React Avanzado', value: 'react' },
+                { label: 'Advanced React', value: 'react' },
                 { label: 'Node & APIs', value: 'node' },
                 { label: 'Prompt Engineering', value: 'prompt' },
                 { label: 'Testing', value: 'testing' }
@@ -165,7 +164,7 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
             {
               id: 'date',
               type: 'date',
-              label: 'Fecha de asistencia',
+              label: 'Attendance date',
               name: 'date',
               required: true
             }
@@ -175,29 +174,29 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
     }
   },
 
-  // SOLICITUD DE EMPLEO (editorial/serif sobria)
+  // JOB APPLICATION
   {
     id: 'job-application',
-    name: 'Solicitud de empleo',
-    description: 'Datos personales, habilidades y CV.',
+    name: 'Job application',
+    description: 'Personal info, skills and resume summary.',
     theme: 'editorial',
     coverUrl:
       'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1800&auto=format&fit=crop',
     form: {
-      title: 'Aplicación a vacante',
-      description: 'Completa tu información para evaluar tu perfil.',
+      title: 'Apply to the role',
+      description: 'Complete your info so we can evaluate your profile.',
       type: 'multi-step',
-      fontTheme: 'editorial', // Playfair
+      fontTheme: 'editorial',
       backgroundTint: 'dark',
       steps: [
         {
-          id: 'perfil',
-          title: 'Perfil',
+          id: 'profile',
+          title: 'Profile',
           fields: [
             {
               id: 'full-name',
               type: 'text',
-              label: 'Nombre completo',
+              label: 'Full name',
               name: 'full-name',
               required: true
             },
@@ -212,7 +211,7 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
             {
               id: 'curp',
               type: 'text',
-              label: 'CURP',
+              label: 'CURP (Mexico)',
               name: 'curp',
               required: false,
               validations: { regex: 'curp' }
@@ -221,12 +220,12 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
         },
         {
           id: 'skills',
-          title: 'Habilidades',
+          title: 'Skills',
           fields: [
             {
               id: 'stack',
               type: 'select',
-              label: 'Stack principal',
+              label: 'Primary stack',
               name: 'stack',
               required: true,
               options: [
@@ -239,7 +238,7 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
             {
               id: 'skills-multi',
               type: 'select',
-              label: 'Habilidades',
+              label: 'Skills',
               name: 'skills',
               required: true,
               multiple: true,
@@ -249,7 +248,7 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
                 { label: 'React', value: 'react' },
                 { label: 'Node.js', value: 'node' },
                 { label: 'TypeScript', value: 'ts' },
-                { label: 'Pruebas (Jest)', value: 'jest' },
+                { label: 'Testing (Jest)', value: 'jest' },
                 { label: 'SQL', value: 'sql' },
                 { label: 'Docker', value: 'docker' }
               ]
@@ -257,9 +256,9 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
             {
               id: 'about',
               type: 'textarea',
-              label: 'Resumen',
+              label: 'Summary',
               name: 'about',
-              placeholder: 'Cuéntanos brevemente sobre ti',
+              placeholder: 'Tell us briefly about you',
               required: true,
               validations: { minLength: 30, maxLength: 800 }
             }
@@ -269,24 +268,31 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
     }
   },
 
-  // SOPORTE (tech/sans neutra)
+  // SUPPORT TICKET
   {
     id: 'support-ticket',
-    name: 'Soporte técnico',
-    description: 'Crea un ticket con prioridad y adjuntos.',
+    name: 'Support ticket',
+    description: 'Create a ticket with priority and details.',
     theme: 'tech',
     coverUrl:
-      'https://images.unsplash.com/photo-1516387938699-a93567ec168e?q=80&w=1800&auto=format&fit=crop', // código/terminal
+      'https://images.unsplash.com/photo-1516387938699-a93567ec168e?q=80&w=1800&auto=format&fit=crop',
     form: {
-      title: 'Ticket de soporte',
-      description: 'Describe el problema para ayudarte mejor.',
+      title: 'Support ticket',
+      description: 'Describe the issue so we can help.',
       type: 'simple',
-      fontTheme: 'tech', // Inter
+      fontTheme: 'tech',
       backgroundTint: 'darker',
       steps: [
         {
           id: 'ticket',
           fields: [
+            {
+              id: 'full-name',
+              type: 'text',
+              label: 'Full name',
+              name: 'full-name',
+              required: true
+            },
             {
               id: 'email',
               type: 'text',
@@ -298,32 +304,32 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
             {
               id: 'priority',
               type: 'select',
-              label: 'Prioridad',
+              label: 'Priority',
               name: 'priority',
               required: true,
               options: [
-                { label: 'Baja', value: 'low' },
-                { label: 'Media', value: 'medium' },
-                { label: 'Alta', value: 'high' }
+                { label: 'Low', value: 'low' },
+                { label: 'Medium', value: 'medium' },
+                { label: 'High', value: 'high' }
               ]
             },
             {
               id: 'category',
               type: 'select',
-              label: 'Categoría',
+              label: 'Category',
               name: 'category',
               required: true,
               options: [
-                { label: 'Acceso', value: 'access' },
-                { label: 'Facturación', value: 'billing' },
+                { label: 'Access', value: 'access' },
+                { label: 'Billing', value: 'billing' },
                 { label: 'Bug', value: 'bug' },
-                { label: 'Mejora', value: 'improvement' }
+                { label: 'Improvement', value: 'improvement' }
               ]
             },
             {
               id: 'description',
               type: 'textarea',
-              label: 'Descripción',
+              label: 'Description',
               name: 'description',
               required: true,
               validations: { minLength: 10 }
@@ -334,29 +340,50 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
     }
   },
 
-  // NPS / FEEDBACK (editorial/arte abstracto)
+  // CUSTOMER FEEDBACK / NPS
   {
     id: 'customer-feedback',
-    name: 'Feedback de clientes (NPS)',
-    description: 'Pregunta NPS + campos abiertos.',
+    name: 'Customer feedback (NPS)',
+    description: 'NPS question + open comments.',
     theme: 'aurora',
     coverUrl:
-      'https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=1800&auto=format&fit=crop', // abstracto/aurora
+      'https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=1800&auto=format&fit=crop',
     form: {
-      title: 'Encuesta de satisfacción',
-      description: 'Tu opinión nos ayuda a mejorar.',
+      title: 'Satisfaction survey',
+      description: 'Your opinion helps us improve.',
       type: 'multi-step',
-      fontTheme: 'editorial', // Playfair para darle “report look”
+      fontTheme: 'editorial',
       backgroundTint: 'dark',
       steps: [
         {
+          id: 'intro',
+          title: 'Your info',
+          fields: [
+            {
+              id: 'full-name',
+              type: 'text',
+              label: 'Full name',
+              name: 'full-name',
+              required: true
+            },
+            {
+              id: 'email',
+              type: 'text',
+              label: 'Email',
+              name: 'email',
+              required: true,
+              validations: { regex: 'email' }
+            }
+          ]
+        },
+        {
           id: 'nps',
-          title: 'Satisfacción',
+          title: 'Satisfaction',
           fields: [
             {
               id: 'nps',
               type: 'select',
-              label: '¿Qué tan probable es que nos recomiendes?',
+              label: 'How likely are you to recommend us?',
               name: 'nps',
               required: true,
               options: Array.from({ length: 11 }).map((_, i) => ({
@@ -367,20 +394,20 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
           ]
         },
         {
-          id: 'comentarios',
-          title: 'Comentarios',
+          id: 'comments',
+          title: 'Comments',
           fields: [
             {
               id: 'what-like',
               type: 'textarea',
-              label: '¿Qué te gustó?',
+              label: 'What did you like?',
               name: 'what-like',
               required: false
             },
             {
               id: 'improve',
               type: 'textarea',
-              label: '¿Qué podemos mejorar?',
+              label: 'What can we improve?',
               name: 'improve',
               required: false
             }
@@ -390,29 +417,29 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
     }
   },
 
-  // RESERVA / CITA (papel/calendario; serif suave)
+  // BOOKING / APPOINTMENT
   {
     id: 'booking-intake',
-    name: 'Reserva / Cita',
-    description: 'Datos del cliente y fecha preferida.',
+    name: 'Booking / Appointment',
+    description: 'Customer info and preferred date.',
     theme: 'elegant',
     coverUrl:
-      'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?q=80&w=1800&auto=format&fit=crop', // calendario/cuaderno
+      'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?q=80&w=1800&auto=format&fit=crop',
     form: {
-      title: 'Solicitar cita',
-      description: 'Elige fecha y comparte tus datos.',
+      title: 'Request an appointment',
+      description: 'Choose a date and share your details.',
       type: 'simple',
-      fontTheme: 'elegant', // Lora
+      fontTheme: 'elegant',
       backgroundTint: 'dark',
       steps: [
         {
           id: 'booking',
           fields: [
             {
-              id: 'name',
+              id: 'full-name',
               type: 'text',
-              label: 'Nombre',
-              name: 'name',
+              label: 'Full name',
+              name: 'full-name',
               required: true
             },
             {
@@ -426,26 +453,26 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
             {
               id: 'service',
               type: 'select',
-              label: 'Servicio',
+              label: 'Service',
               name: 'service',
               required: true,
               options: [
-                { label: 'Consulta', value: 'consult' },
+                { label: 'Consultation', value: 'consult' },
                 { label: 'Demo', value: 'demo' },
-                { label: 'Asesoría', value: 'advisory' }
+                { label: 'Advisory', value: 'advisory' }
               ]
             },
             {
               id: 'date',
               type: 'date',
-              label: 'Fecha preferida',
+              label: 'Preferred date',
               name: 'date',
               required: true
             },
             {
               id: 'notes',
               type: 'textarea',
-              label: 'Notas',
+              label: 'Notes',
               name: 'notes',
               required: false
             }
@@ -455,29 +482,37 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
     }
   },
 
-  // BODA (cursiva + serif)
+  // WEDDING INVITE
   {
     id: 'wedding-invite',
-    name: 'Invitación de boda',
-    description: 'RSVP elegante con datos clave.',
+    name: 'Wedding invite',
+    description: 'Elegant RSVP with key details.',
     theme: 'wedding',
     coverUrl:
       'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1800&auto=format&fit=crop',
     form: {
-      title: '¡Nos casamos! ✨',
+      title: "We're getting married! ✨",
       type: 'multi-step',
-      fontTheme: 'wedding', // Great Vibes + Lora
+      fontTheme: 'wedding',
       backgroundTint: 'darker',
       steps: [
         {
           id: 's1',
           fields: [
             {
-              id: 'name',
+              id: 'full-name',
               type: 'text',
-              label: 'Tu nombre completo',
-              name: 'name',
+              label: 'Your full name',
+              name: 'full-name',
               required: true
+            },
+            {
+              id: 'email',
+              type: 'text',
+              label: 'Email',
+              name: 'email',
+              required: true,
+              validations: { regex: 'email' }
             }
           ]
         },
@@ -487,11 +522,11 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
             {
               id: 'attend',
               type: 'select',
-              label: '¿Asistirás?',
+              label: 'Will you attend?',
               name: 'attend',
               required: true,
               options: [
-                { label: 'Sí', value: 'yes' },
+                { label: 'Yes', value: 'yes' },
                 { label: 'No', value: 'no' }
               ]
             }
@@ -503,12 +538,12 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
             {
               id: 'menu',
               type: 'select',
-              label: 'Preferencia de menú',
+              label: 'Menu preference',
               name: 'menu',
               options: [
                 { label: 'Regular', value: 'regular' },
-                { label: 'Vegetariano', value: 'veg' },
-                { label: 'Infantil', value: 'kids' }
+                { label: 'Vegetarian', value: 'veg' },
+                { label: 'Kids', value: 'kids' }
               ]
             }
           ]
@@ -519,7 +554,7 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
             {
               id: 'notes',
               type: 'textarea',
-              label: 'Notas (alergias, etc.)',
+              label: 'Notes (allergies, etc.)',
               name: 'notes'
             }
           ]
@@ -528,33 +563,55 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
     }
   },
 
-  // PERFUMES (serif fashion)
+  // PERFUME MARKET STUDY
   {
     id: 'perfume-market-study',
-    name: 'Estudio de mercado: Perfumes',
-    description: 'Preferencias olfativas y hábitos de compra.',
+    name: 'Market study: Perfumes',
+    description: 'Olfactive preferences and buying habits.',
     theme: 'perfume',
     coverUrl:
-      'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=1800&auto=format&fit=crop', // botella perfume
+      'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=1800&auto=format&fit=crop',
     form: {
-      title: 'Encuesta de Perfumes',
+      title: 'Perfume survey',
       type: 'multi-step',
-      fontTheme: 'perfume', // Cormorant
+      fontTheme: 'perfume',
       backgroundTint: 'darker',
       steps: [
         {
+          id: 'p0',
+          title: 'Your info',
+          fields: [
+            {
+              id: 'full-name',
+              type: 'text',
+              label: 'Full name',
+              name: 'full-name',
+              required: true
+            },
+            {
+              id: 'email',
+              type: 'text',
+              label: 'Email',
+              name: 'email',
+              required: true,
+              validations: { regex: 'email' }
+            }
+          ]
+        },
+        {
           id: 'p1',
+          title: 'Age',
           fields: [
             {
               id: 'age',
               type: 'select',
-              label: 'Rango de edad',
+              label: 'Age range',
               name: 'age',
               required: true,
               options: [
-                { label: '18-24', value: '18-24' },
-                { label: '25-34', value: '25-34' },
-                { label: '35-44', value: '35-44' },
+                { label: '18–24', value: '18-24' },
+                { label: '25–34', value: '25-34' },
+                { label: '35–44', value: '35-44' },
                 { label: '45+', value: '45+' }
               ]
             }
@@ -562,34 +619,36 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
         },
         {
           id: 'p2',
+          title: 'Families',
           fields: [
             {
               id: 'families',
               type: 'select',
-              label: 'Familias favoritas',
+              label: 'Favorite families',
               name: 'families',
               multiple: true,
               options: [
                 { label: 'Floral', value: 'floral' },
-                { label: 'Amaderada', value: 'woody' },
+                { label: 'Woody', value: 'woody' },
                 { label: 'Oriental', value: 'oriental' },
-                { label: 'Cítrica', value: 'citrus' }
+                { label: 'Citrus', value: 'citrus' }
               ]
             }
           ]
         },
         {
           id: 'p3',
+          title: 'Budget',
           fields: [
             {
               id: 'budget',
               type: 'select',
-              label: 'Presupuesto habitual',
+              label: 'Typical budget',
               name: 'budget',
               options: [
-                { label: '<$50', value: 'a' },
-                { label: '$50-$100', value: 'b' },
-                { label: '$100-$200', value: 'c' },
+                { label: '< $50', value: 'a' },
+                { label: '$50–$100', value: 'b' },
+                { label: '$100–$200', value: 'c' },
                 { label: '$200+', value: 'd' }
               ]
             }
@@ -597,11 +656,12 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
         },
         {
           id: 'p4',
+          title: 'Brand',
           fields: [
             {
               id: 'brand',
               type: 'text',
-              label: 'Marca favorita',
+              label: 'Favorite brand',
               name: 'brand'
             }
           ]
@@ -610,27 +670,49 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
     }
   },
 
-  // RESTAURANTE (asegurar imagen) (moderna/sans)
+  // RESTAURANT RESERVATION
   {
     id: 'restaurant-reservation',
-    name: 'Reserva de restaurante',
-    description: 'Fecha, horario y preferencias.',
+    name: 'Restaurant reservation',
+    description: 'Date, time and preferences.',
     theme: 'event',
     coverUrl:
-      'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1800&auto=format&fit=crop', // mesa restaurante cálida
+      'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1800&auto=format&fit=crop',
     form: {
-      title: 'Reserva tu mesa',
+      title: 'Book your table',
       type: 'multi-step',
-      fontTheme: 'event', // Poppins
+      fontTheme: 'event',
       backgroundTint: 'dark',
       steps: [
         {
+          id: 'r0',
+          title: 'Your info',
+          fields: [
+            {
+              id: 'full-name',
+              type: 'text',
+              label: 'Full name',
+              name: 'full-name',
+              required: true
+            },
+            {
+              id: 'email',
+              type: 'text',
+              label: 'Email',
+              name: 'email',
+              required: true,
+              validations: { regex: 'email' }
+            }
+          ]
+        },
+        {
           id: 'r1',
+          title: 'Date',
           fields: [
             {
               id: 'date',
               type: 'date',
-              label: 'Fecha',
+              label: 'Date',
               name: 'date',
               required: true
             }
@@ -638,11 +720,12 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
         },
         {
           id: 'r2',
+          title: 'Time',
           fields: [
             {
               id: 'time',
               type: 'text',
-              label: 'Horario',
+              label: 'Time',
               name: 'time',
               placeholder: '20:30',
               required: true
@@ -651,17 +734,18 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
         },
         {
           id: 'r3',
+          title: 'Guests',
           fields: [
             {
               id: 'people',
               type: 'select',
-              label: 'Personas',
+              label: 'Guests',
               name: 'people',
               required: true,
               options: [
                 { label: '2', value: '2' },
-                { label: '3-4', value: '4' },
-                { label: '5-6', value: '6' },
+                { label: '3–4', value: '4' },
+                { label: '5–6', value: '6' },
                 { label: '7+', value: '7' }
               ]
             }
@@ -669,61 +753,73 @@ export const FORM_TEMPLATES: TemplateMeta[] = [
         },
         {
           id: 'r4',
+          title: 'Notes',
           fields: [
-            { id: 'notes', type: 'textarea', label: 'Notas', name: 'notes' }
+            { id: 'notes', type: 'textarea', label: 'Notes', name: 'notes' }
           ]
         }
       ]
     }
   },
 
-  // FITNESS (tech/sans)
+  // FITNESS SIGNUP
   {
     id: 'fitness-signup',
-    name: 'Inscripción a clase fitness',
-    description: 'Nivel, horario y objetivos.',
+    name: 'Fitness class signup',
+    description: 'Level, schedule and goals.',
     theme: 'tech',
     coverUrl:
-      'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1800&auto=format&fit=crop', // gym dinámico
+      'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1800&auto=format&fit=crop',
     form: {
-      title: 'Únete a la clase',
+      title: 'Join the class',
       type: 'multi-step',
-      fontTheme: 'tech', // Inter
+      fontTheme: 'tech',
       backgroundTint: 'medium',
       steps: [
         {
           id: 'f1',
+          title: 'Your info',
           fields: [
             {
-              id: 'name',
+              id: 'full-name',
               type: 'text',
-              label: 'Nombre',
-              name: 'name',
+              label: 'Full name',
+              name: 'full-name',
               required: true
+            },
+            {
+              id: 'email',
+              type: 'text',
+              label: 'Email',
+              name: 'email',
+              required: true,
+              validations: { regex: 'email' }
             }
           ]
         },
         {
           id: 'f2',
+          title: 'Level',
           fields: [
             {
               id: 'level',
               type: 'select',
-              label: 'Nivel',
+              label: 'Level',
               name: 'level',
               required: true,
               options: [
-                { label: 'Inicial', value: 'beginner' },
-                { label: 'Intermedio', value: 'intermediate' },
-                { label: 'Avanzado', value: 'advanced' }
+                { label: 'Beginner', value: 'beginner' },
+                { label: 'Intermediate', value: 'intermediate' },
+                { label: 'Advanced', value: 'advanced' }
               ]
             }
           ]
         },
         {
           id: 'f3',
+          title: 'Goal',
           fields: [
-            { id: 'goal', type: 'textarea', label: 'Objetivo', name: 'goal' }
+            { id: 'goal', type: 'textarea', label: 'Goal', name: 'goal' }
           ]
         }
       ]

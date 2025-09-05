@@ -92,7 +92,7 @@ export default function FormsTabPage() {
                     {m.theme}
                   </span>
                   <span className="ml-auto text-[11px] text-muted-foreground">
-                    {m.stepsCount} pasos · {m.fieldsCount} campos
+                    {m.stepsCount} steps · {m.fieldsCount} fields
                   </span>
                 </div>
 

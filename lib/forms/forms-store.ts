@@ -128,15 +128,13 @@ export function updateForm(
 }
 
 export function deleteForm(id: string) {
-  try {
-    const raw = localStorage.getItem('forms:v1');
-    if (!raw) return;
-    const arr: any[] = JSON.parse(raw);
-    const next = arr.filter((f) => f.id !== id);
-    localStorage.setItem('forms:v1', JSON.stringify(next));
-  } catch (e) {
-    console.error('deleteForm error', e);
-  }
+  const db = readDb<FormConfig>(); // usa la misma base
+  const mb = readMeta(); // y el meta
+  if (!db[id]) return;
+  delete db[id];
+  delete mb[id];
+  writeDb(db);
+  writeMeta(mb);
 }
 
 export function duplicateForm(id: string): string | null {

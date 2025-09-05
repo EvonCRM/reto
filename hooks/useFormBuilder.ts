@@ -14,10 +14,24 @@ function generateId() {
 
 const DRAFT_KEY = 'form-builder-draft';
 
+const DEFAULT_COVER =
+  'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?q=80&w=1800&auto=format&fit=crop';
+
 const defaultEmptyForm = (): FormConfig => ({
-  title: 'Untitled',
-  type: 'simple',
-  steps: [{ id: 'step-1', title: 'Paso 1', fields: [] }]
+  title: 'Untitled form',
+  description: '',
+  type: 'multi-step', // si quieres multi-step por defecto
+  steps: [{ id: 'step-1', title: 'Your info', fields: [] }],
+  fontTheme: 'elegant',
+  backgroundUrl: DEFAULT_COVER,
+  backgroundMode: 'cover',
+  backgroundTint: 'dark',
+  cover: {
+    enabled: true,
+    title: 'Welcome!',
+    subtitle: 'Click to begin',
+    ctaLabel: 'Start'
+  }
 });
 
 export default function useFormBuilder(
@@ -35,7 +49,7 @@ export default function useFormBuilder(
     steps: [
       {
         id: generateId(),
-        title: 'Paso 1',
+        title: 'Step 1',
         fields: []
       }
     ]
@@ -115,7 +129,7 @@ export default function useFormBuilder(
     setForm((prev) => {
       const newStep: FormStep = {
         id: generateId(),
-        title: `Paso ${prev.steps.length + 1}`,
+        title: `Step ${prev.steps.length + 1}`,
         fields: []
       };
       const newForm = {
